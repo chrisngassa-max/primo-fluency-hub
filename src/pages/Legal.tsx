@@ -27,11 +27,11 @@ const Legal = () => (
 
       {/* ──────────────────────────────────────────────────── */}
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold">3. Usage obligatoire de l'IA et de la voix</h2>
+        <h2 className="text-xl font-semibold">3. Fonctionnalités IA et vocales</h2>
         <p className="text-muted-foreground">
-          Le traitement IA et le traitement vocal sont nécessaires à l'exécution de la
-          formation sur captcf.fr. Sans ces traitements, la formation ne peut pas être
-          suivie sur la plateforme.
+          Les devoirs écrits déterministes peuvent être réalisés et remis sans consentement IA ni voix.
+          Les aides et bilans IA nécessitent le consentement IA ; les fonctionnalités vocales
+          nécessitent le consentement correspondant. Les autres parcours conservent leurs conditions d'accès.
         </p>
         <div>
           <h3 className="font-medium">L'IA est utilisée pour :</h3>
@@ -56,7 +56,7 @@ const Legal = () => (
           </ul>
         </div>
         <p className="text-muted-foreground">
-          <strong>Sans consentement IA et voix, la formation ne peut pas être suivie sur la plateforme.</strong>
+          <strong>Le refus des fonctionnalités IA ou vocales ne bloque pas les devoirs écrits qui peuvent fonctionner sans elles.</strong>
         </p>
       </section>
 
@@ -133,10 +133,9 @@ const Legal = () => (
           audio, transcriptions et logs associés : <strong>contact@tcfpro.fr</strong>.
         </p>
         <p className="text-muted-foreground text-sm">
-          Conséquence du refus ou du retrait : sans consentement IA et voix, la
-          formation ne peut pas être suivie sur la plateforme. L'accès aux exercices,
-          devoirs, corrections, bilans, progression, séances, parcours et expression
-          orale est désactivé.
+          Le refus ou le retrait d'un consentement désactive les fonctionnalités correspondantes.
+          Les devoirs écrits déterministes, leur sauvegarde et leur résultat principal restent accessibles.
+          Un bilan IA facultatif peut être omis sans annuler la remise.
         </p>
       </section>
 

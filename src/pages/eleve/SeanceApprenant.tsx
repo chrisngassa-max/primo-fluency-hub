@@ -22,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
 import { WorkedExamplePanel } from "@/components/learner/WorkedExamplePanel";
 import CoAudioPlayer from "@/components/eleve/CoAudioPlayer";
+import { usePedagogicalHelpContext } from "@/hooks/usePedagogicalHelpContext";
 
 /**
  * Parcours apprenant intégré d'une séance (S01 en pilote). Remplace la page
@@ -80,6 +81,10 @@ export default function SeanceApprenant() {
   const currentBlock = currentGroup?.blocks[blockIndex];
   const currentExercise = currentBlock?.kind === "exercise" ? (currentBlock as LearnerExerciseBlock) : null;
   const currentAttemptId = currentExercise?.my_attempt?.attempt_id ?? null;
+  usePedagogicalHelpContext(currentExercise && data?.session_id ? {
+    exerciseId: currentExercise.id, sessionId: data.session_id, itemIndex,
+    ...(currentAttemptId ? { attemptId: currentAttemptId } : {}),
+  } : null, currentExercise?.items.length ?? 0);
 
   const { data: correction, isLoading: loadingCorrection } = useQuery({
     queryKey: ["seance-apprenant-correction", currentAttemptId],

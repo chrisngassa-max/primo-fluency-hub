@@ -293,7 +293,7 @@ const SessionPilot = () => {
       // Get devoirs linked to previous session
       const { data: devoirs } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(titre, competence), eleve:profiles(nom, prenom)")
+        .select("*, exercice:exercices!devoirs_exercice_id_fkey(titre, competence), eleve:profiles(nom, prenom)")
         .eq("session_id", prevSessionId);
 
       if (!devoirs || devoirs.length === 0) return null;

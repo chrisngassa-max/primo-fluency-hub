@@ -13,6 +13,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { AIError, callAI } from "../_shared/ai-client.ts";
+import { handlePedagogical } from "../_shared/assistant-pedagogique/index.ts";
+import { supabaseStore } from "../_shared/assistant-pedagogique/store.ts";
 import {
   checkConsent,
   consentBlockedResponse,
@@ -221,6 +223,26 @@ serve(async (req) => {
   const body = req.method === "GET" ? null : await req.json().catch(() => null);
 
   try {
+    // Lot 2A déterministe : auth obligatoire, aucune dépendance au flag IA,
+    // aucun appel modèle, aucune conservation des questions/réponses.
+    if (body?.kind === "pedagogique") {
+      userId = await getUserIdFromAuth(req);
+      if (!userId) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
+      });
+      const url = Deno.env.get("SUPABASE_URL")!;
+      const userClient = createClient(url, Deno.env.get("SUPABASE_ANON_KEY")!, {
+        global: { headers: { Authorization: req.headers.get("Authorization")! } },
+      });
+      const contentClient = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+      const result = await handlePedagogical({
+        authUserId: userId, body,
+        userStore: supabaseStore(userClient), contentStore: supabaseStore(contentClient),
+      });
+      return new Response(JSON.stringify(result), {
+        headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
+      });
+    }
     if (body?.kind === "accueil") {
       userId = await getUserIdFromAuth(req);
       if (!userId) {

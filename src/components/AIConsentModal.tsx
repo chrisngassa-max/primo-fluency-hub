@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -15,28 +15,29 @@ interface Props {
   blocking?: boolean;
 }
 
-const A1_TEXT = `Cette formation utilise une IA.
-L'IA corrige tes exercices et prépare ton travail.
-Pour les exercices à l'oral, tu dois enregistrer ta voix.
-Ton formateur peut écouter ta voix.
-L'IA peut transformer ta voix en texte.
-Pour utiliser l'application, tu dois accepter l'IA et la voix.
-Si tu refuses, tu ne peux pas suivre la formation ici.`;
+const A1_TEXT = `Les devoirs écrits déterministes restent accessibles sans IA ni voix.
+Les aides et bilans IA nécessitent ton accord pour l'IA.
+Les fonctions vocales nécessitent ton accord pour la voix.
+Tu peux choisir séparément et modifier tes choix dans ton profil.
+Les autres parcours restent soumis à leurs conditions d'accès.`;
 
 export default function AIConsentModal({ open, onClose, blocking = true }: Props) {
-  const { accept } = useAIConsent();
+  const { accept, isFullyGranted, consent, loading } = useAIConsent();
   const [ai, setAi] = useState(false);
   const [bio, setBio] = useState(false);
   const [saving, setSaving] = useState(false);
   const [playingTTS, setPlayingTTS] = useState(false);
 
-  const handleAccept = async () => {
-    if (!ai || !bio) {
-      toast.error("Vous devez cocher les deux cases pour accepter.");
-      return;
+  useEffect(() => {
+    if (!loading && open) {
+      setAi(!!consent?.consent_ai && !consent?.revoked_at);
+      setBio(!!consent?.consent_biometric && !consent?.revoked_at);
     }
+  }, [loading, open, consent?.consent_ai, consent?.consent_biometric, consent?.revoked_at]);
+
+  const handleAccept = async () => {
     setSaving(true);
-    const { error } = await accept(true, true, "modal");
+    const { error } = await accept(ai, bio, "modal");
     setSaving(false);
     if (error) toast.error("Erreur d'enregistrement du consentement");
     else {
@@ -51,12 +52,13 @@ export default function AIConsentModal({ open, onClose, blocking = true }: Props
     setSaving(false);
     if (error) toast.error("Erreur");
     else {
-      toast.message("Refus enregistré. L'accès aux fonctionnalités pédagogiques est désactivé.");
+      toast.message("Refus enregistré. Les devoirs écrits déterministes restent accessibles.");
       onClose?.();
     }
   };
 
   const playTTS = async () => {
+    if (!isFullyGranted) return;
     setPlayingTTS(true);
     try {
       const { data, error } = await supabase.functions.invoke("tcf-process-audio", {
@@ -76,19 +78,19 @@ export default function AIConsentModal({ open, onClose, blocking = true }: Props
     <Dialog open={open} onOpenChange={(v) => { if (!v && !blocking) onClose?.(); }}>
       <DialogContent className="max-w-2xl" onInteractOutside={(e) => blocking && e.preventDefault()} onEscapeKeyDown={(e) => blocking && e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Consentement IA et voix obligatoire</DialogTitle>
+          <DialogTitle>Choisir mes consentements IA et voix</DialogTitle>
           <DialogDescription>
-            Le traitement IA et le traitement vocal sont nécessaires à l'exécution de la formation sur captcf.fr.
+            Les devoirs écrits déterministes restent accessibles sans ces accords. Les fonctionnalités qui en dépendent restent protégées.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 text-sm">
           <div className="rounded-md bg-muted p-3 whitespace-pre-line">
             {A1_TEXT}
-            <Button type="button" variant="ghost" size="sm" className="mt-2" onClick={playTTS} disabled={playingTTS}>
+            {isFullyGranted && <Button type="button" variant="ghost" size="sm" className="mt-2" onClick={playTTS} disabled={playingTTS}>
               <Volume2 className="h-4 w-4 mr-1" />
               {playingTTS ? "Lecture…" : "Écouter"}
-            </Button>
+            </Button>}
           </div>
 
           <label className="flex items-start gap-3 cursor-pointer">
@@ -107,12 +109,13 @@ export default function AIConsentModal({ open, onClose, blocking = true }: Props
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2 justify-end">
-          <Button variant="outline" onClick={handleRefuse} disabled={saving}>
+          <Button asChild variant="outline"><Link to="/eleve/devoirs">Mes devoirs écrits</Link></Button>
+          <Button variant="outline" onClick={handleRefuse} disabled={saving || loading}>
             Je refuse
           </Button>
-          <Button onClick={handleAccept} disabled={saving || !ai || !bio}>
+          <Button onClick={handleAccept} disabled={saving || loading}>
             {saving && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-            J'accepte
+            Enregistrer mes choix
           </Button>
         </div>
       </DialogContent>

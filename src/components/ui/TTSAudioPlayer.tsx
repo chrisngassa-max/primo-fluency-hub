@@ -1,3 +1,4 @@
+import { withHomeworkConsent } from "@/contexts/HomeworkConsentContext";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -373,4 +374,5 @@ const TTSAudioPlayer = ({
   );
 };
 
-export default TTSAudioPlayer;
+// Keep the existing double protection for TTS, including players nested in SmartText.
+export default withHomeworkConsent(TTSAudioPlayer, "both");

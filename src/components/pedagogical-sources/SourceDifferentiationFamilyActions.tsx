@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ClipboardCheck, Loader2, Send, Upload } from "lucide-react";
 import { toast } from "sonner";
@@ -188,10 +188,33 @@ function LevelFamilyPanel({
   );
 }
 
-export function SourceDifferentiationFamilyActions({ source }: { source: PedagogicalSource }) {
+export type DifferentiationFamilyActionsProps = {
+  source: PedagogicalSource;
+  /** dialog (défaut, hub sources) ou panneau inline (Studio). */
+  variant?: "dialog" | "inline";
+  /** Gate Studio : bloque la génération avec une raison formateur. */
+  generationGate?: { allowed: boolean; reason?: string };
+  /** Gate Studio : bloque la publication tant que non validé / hors plafond. */
+  publishGate?: (family: DifferentiationFamily) => { allowed: boolean; reason?: string };
+  /** Afficher uniquement génération, revue, ou les deux. */
+  sections?: { generate?: boolean; review?: boolean };
+  onFamiliesChange?: (families: DifferentiationFamily[]) => void;
+  onSelectedLevelsChange?: (levels: SliceLevel[]) => void;
+};
+
+export function SourceDifferentiationFamilyActions({
+  source,
+  variant = "dialog",
+  generationGate,
+  publishGate,
+  sections = { generate: true, review: true },
+  onFamiliesChange,
+  onSelectedLevelsChange,
+}: DifferentiationFamilyActionsProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
+  const inline = variant === "inline";
+  const [open, setOpen] = useState(inline);
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [selectedLevels, setSelectedLevels] = useState<SliceLevel[]>(["A2"]);
@@ -202,8 +225,16 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
   const { data: families = [], isLoading, refetch } = useQuery({
     queryKey: ["differentiation-families", source.id],
     queryFn: () => fetchDifferentiationFamiliesForSource(source.id),
-    enabled: open && source.source_kind === "audio",
+    enabled: (inline || open) && source.source_kind === "audio",
   });
+
+  useEffect(() => {
+    onFamiliesChange?.(families);
+  }, [families, onFamiliesChange]);
+
+  useEffect(() => {
+    onSelectedLevelsChange?.(selectedLevels);
+  }, [selectedLevels, onSelectedLevelsChange]);
 
   const byLevel = useMemo(() => pickLatestFamilyPerLevel(families), [families]);
   const activeFamily = byLevel[activeTab] ?? null;
@@ -211,7 +242,7 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
   const { data: feedbackEntries = [] } = useQuery({
     queryKey: ["differentiation-family-feedback", activeFamily?.id],
     queryFn: () => fetchDifferentiationFamilyFeedback(activeFamily!.id),
-    enabled: open && Boolean(activeFamily?.id),
+    enabled: (inline || open) && Boolean(activeFamily?.id),
   });
 
   if (source.source_kind !== "audio") return null;
@@ -231,6 +262,12 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
   const runSelected = async () => {
     if (selectedLevels.length === 0) {
       toast.error("Sélectionnez au moins un niveau.");
+      return;
+    }
+    if (generationGate && !generationGate.allowed) {
+      toast.error("Génération bloquée", {
+        description: generationGate.reason || "Conditions non remplies pour générer.",
+      });
       return;
     }
     setBusy(true);
@@ -299,6 +336,15 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
       toast.error("Cette famille est déjà publiée.");
       return;
     }
+    if (publishGate) {
+      const gate = publishGate(activeFamily);
+      if (!gate.allowed) {
+        toast.error("Publication impossible", {
+          description: gate.reason || "Validez d’abord la variante.",
+        });
+        return;
+      }
+    }
     setBusy(true);
     try {
       const result = await publishDifferentiationFamily(activeFamily.id);
@@ -313,8 +359,124 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
     }
   };
 
-  const canGenerate = source.status === "analyzed";
+  const analyzedReady = source.status === "analyzed";
+  const studioGateAllows = !generationGate || generationGate.allowed;
+  const canGenerate = analyzedReady && studioGateAllows;
   const availableTabs = SLICE_LEVELS.filter((level) => byLevel[level]);
+  const showGenerate = sections.generate !== false;
+  const showReview = sections.review !== false;
+
+  const panel = (
+    <div className="space-y-4">
+      {showGenerate && (
+        <div className="space-y-3 rounded border p-3">
+          <p className="text-sm font-medium">Créer des activités pour :</p>
+          <div className="flex flex-wrap gap-4" role="group" aria-label="Sélection des niveaux A1 à B2">
+            {SLICE_LEVELS.map((level) => (
+              <label key={level} className="flex items-center gap-2 text-sm">
+                <Checkbox
+                  checked={selectedLevels.includes(level)}
+                  onCheckedChange={(checked) => toggleLevel(level, checked === true)}
+                  disabled={busy}
+                  aria-label={`Niveau ${level}`}
+                />
+                {level}
+                {byLevel[level] && <Badge variant="secondary">existant</Badge>}
+              </label>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              disabled={busy || !canGenerate || selectedLevels.length === 0}
+              onClick={runSelected}
+            >
+              {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Générer les niveaux sélectionnés
+            </Button>
+            {!analyzedReady && (
+              <p className="text-xs text-muted-foreground self-center">
+                Analysez d’abord l’audio pour créer les chunks sourcés.
+              </p>
+            )}
+            {analyzedReady && generationGate && !generationGate.allowed && (
+              <p className="text-xs text-destructive self-center" role="status">
+                {generationGate.reason}
+              </p>
+            )}
+          </div>
+          {Object.keys(progress).length > 0 && (
+            <div className="flex flex-wrap gap-2 text-xs" aria-live="polite">
+              {SLICE_LEVELS.map((level) => progress[level] ? (
+                <Badge key={level} variant={progress[level] === "error" ? "destructive" : "secondary"}>
+                  {level}: {progress[level]}
+                </Badge>
+              ) : null)}
+            </div>
+          )}
+          {lastResults.some((result) => !result.ok && result.error === "DIFF_TRANSFORMATION_NOT_SUPPORTED") && (
+            <div className="rounded border border-amber-500/40 bg-amber-500/5 p-3 text-sm">
+              {lastResults
+                .filter((result) => !result.ok && result.error === "DIFF_TRANSFORMATION_NOT_SUPPORTED")
+                .map((result) => (
+                  <p key={result.level}>
+                    <strong>{result.level}</strong> — {result.message}
+                  </p>
+                ))}
+              <p className="text-muted-foreground mt-1">Les autres niveaux ne sont pas bloqués par ce refus.</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {showReview && (
+        isLoading ? (
+          <Loader2 className="h-5 w-5 animate-spin" aria-label="Chargement des variantes" />
+        ) : availableTabs.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Aucune famille générée pour l’instant. Sélectionnez un ou plusieurs niveaux puis lancez la génération.
+          </p>
+        ) : (
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as SliceLevel)}>
+            <TabsList className="flex flex-wrap h-auto">
+              {availableTabs.map((level) => {
+                const family = byLevel[level]!;
+                const itemCount = getFamilyVariant(family)?.exercise?.items?.length ?? 0;
+                return (
+                  <TabsTrigger key={level} value={level} className="gap-2">
+                    {level}
+                    <Badge variant="outline">{itemCount} Q</Badge>
+                    {family.published_exercise_id && <Badge>publié</Badge>}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+            {availableTabs.map((level) => (
+              <TabsContent key={level} value={level}>
+                <LevelFamilyPanel
+                  family={byLevel[level]!}
+                  busy={busy}
+                  onReview={review}
+                  onPublish={publish}
+                  onFeedback={submitFeedback}
+                  feedback={feedback}
+                  setFeedback={setFeedback}
+                  feedbackEntries={feedbackEntries}
+                />
+              </TabsContent>
+            ))}
+          </Tabs>
+        )
+      )}
+    </div>
+  );
+
+  if (inline) {
+    return (
+      <section aria-label="Activités CO multi-niveaux" className="space-y-3">
+        {panel}
+      </section>
+    );
+  }
 
   return (
     <>
@@ -329,93 +491,7 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
               {source.title} — MP3, transcription et chunks restent partagés ; chaque niveau produit une famille et un exercice distincts.
             </DialogDescription>
           </DialogHeader>
-
-          <div className="space-y-3 rounded border p-3">
-            <p className="text-sm font-medium">Créer des activités pour :</p>
-            <div className="flex flex-wrap gap-4">
-              {SLICE_LEVELS.map((level) => (
-                <label key={level} className="flex items-center gap-2 text-sm">
-                  <Checkbox
-                    checked={selectedLevels.includes(level)}
-                    onCheckedChange={(checked) => toggleLevel(level, checked === true)}
-                    disabled={busy}
-                  />
-                  {level}
-                  {byLevel[level] && <Badge variant="secondary">existant</Badge>}
-                </label>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button disabled={busy || !canGenerate || selectedLevels.length === 0} onClick={runSelected}>
-                {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Générer les niveaux sélectionnés
-              </Button>
-              {!canGenerate && (
-                <p className="text-xs text-muted-foreground self-center">
-                  Analysez d’abord l’audio pour créer les chunks sourcés.
-                </p>
-              )}
-            </div>
-            {Object.keys(progress).length > 0 && (
-              <div className="flex flex-wrap gap-2 text-xs">
-                {SLICE_LEVELS.map((level) => progress[level] ? (
-                  <Badge key={level} variant={progress[level] === "error" ? "destructive" : "secondary"}>
-                    {level}: {progress[level]}
-                  </Badge>
-                ) : null)}
-              </div>
-            )}
-            {lastResults.some((result) => !result.ok && result.error === "DIFF_TRANSFORMATION_NOT_SUPPORTED") && (
-              <div className="rounded border border-amber-500/40 bg-amber-500/5 p-3 text-sm">
-                {lastResults
-                  .filter((result) => !result.ok && result.error === "DIFF_TRANSFORMATION_NOT_SUPPORTED")
-                  .map((result) => (
-                    <p key={result.level}>
-                      <strong>{result.level}</strong> — {result.message}
-                    </p>
-                  ))}
-                <p className="text-muted-foreground mt-1">Les autres niveaux ne sont pas bloqués par ce refus.</p>
-              </div>
-            )}
-          </div>
-
-          {isLoading ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : availableTabs.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Aucune famille générée pour l’instant. Sélectionnez un ou plusieurs niveaux puis lancez la génération.
-            </p>
-          ) : (
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as SliceLevel)}>
-              <TabsList className="flex flex-wrap h-auto">
-                {availableTabs.map((level) => {
-                  const family = byLevel[level]!;
-                  const itemCount = getFamilyVariant(family)?.exercise?.items?.length ?? 0;
-                  return (
-                    <TabsTrigger key={level} value={level} className="gap-2">
-                      {level}
-                      <Badge variant="outline">{itemCount} Q</Badge>
-                      {family.published_exercise_id && <Badge>publié</Badge>}
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
-              {availableTabs.map((level) => (
-                <TabsContent key={level} value={level}>
-                  <LevelFamilyPanel
-                    family={byLevel[level]!}
-                    busy={busy}
-                    onReview={review}
-                    onPublish={publish}
-                    onFeedback={submitFeedback}
-                    feedback={feedback}
-                    setFeedback={setFeedback}
-                    feedbackEntries={feedbackEntries}
-                  />
-                </TabsContent>
-              ))}
-            </Tabs>
-          )}
+          {panel}
         </DialogContent>
       </Dialog>
     </>

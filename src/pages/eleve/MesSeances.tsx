@@ -73,7 +73,7 @@ const MesSeances = () => {
       // 3) Devoirs rattachés à une séance (persisté).
       const { data: devoirs } = await supabase
         .from("devoirs")
-        .select("session_id, exercice_id, exercice:exercices(id, titre, competence)")
+        .select("session_id, exercice_id, exercice:exercices!devoirs_exercice_id_fkey(id, titre, competence)")
         .eq("eleve_id", user!.id)
         .not("session_id", "is", null);
 

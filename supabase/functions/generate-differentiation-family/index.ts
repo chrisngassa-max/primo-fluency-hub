@@ -1,3 +1,5 @@
+import { handleFactsRevision } from "../_shared/differentiation/revise-facts.ts";
+import { revisedFactsGate } from "../_shared/differentiation/revised-facts-gate.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import {
   calculateFactsHash,
@@ -81,12 +83,18 @@ Deno.serve(async (request) => {
     global: { headers: { Authorization: authorization } },
     auth: { persistSession: false },
   });
-  const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
+  let admin: ReturnType<typeof createClient> | null = null;
   let familyId: string | null = null;
   try {
     const { data: { user } } = await caller.auth.getUser();
     if (!user) return json(401, { error: "AUTH_INVALID" });
     const body = await request.json().catch(() => ({}));
+    if (body.action === "revise_facts") {
+      const result = await handleFactsRevision(body, caller);
+      return json(result.status, result.body);
+    }
+    if (body.action !== undefined) return json(400, { error: "ACTION_UNSUPPORTED" });
+    admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
     const sourceId = typeof body.sourceId === "string" ? body.sourceId : "";
     const force = body.force_regenerate === true;
     // Compat historique : absence de target_level => A2
@@ -108,7 +116,7 @@ Deno.serve(async (request) => {
     if (!trainer && !adminRole) return json(403, { error: "STAFF_ROLE_REQUIRED" });
 
     const { data: source, error: sourceError } = await admin.from("pedagogical_sources")
-      .select("id, created_by, title, storage_bucket, storage_path, content_hash, source_kind, status, review_status, mime_type")
+      .select("id, created_by, title, storage_bucket, storage_path, content_hash, source_kind, status, review_status, mime_type, metadata")
       .eq("id", sourceId)
       .maybeSingle();
     if (sourceError) throw sourceError;
@@ -125,6 +133,12 @@ Deno.serve(async (request) => {
     if (readinessError) return json(422, { error: readinessError });
     if (!isSha256ContentHash(source.content_hash)) return json(422, { error: "SOURCE_HASH_REQUIRED" });
     if (!source.storage_bucket || !source.storage_path) return json(422, { error: "SOURCE_MP3_MISSING" });
+
+    const { data: revisionFamilies, error: revisionError } = await admin.from("differentiation_families")
+      .select("payload").eq("source_id", source.id).neq("review_status", "archived");
+    if (revisionError) throw revisionError;
+    const revisionGate = revisedFactsGate(revisionFamilies ?? [], source.metadata, force, body.correctif_05a_c);
+    if (revisionGate) return json(409, { error: revisionGate });
 
     const { contract } = getCoLevelContract(targetLevel);
     const referentialVersion = REFERENTIAL_VERSION;
@@ -178,11 +192,12 @@ Deno.serve(async (request) => {
         });
       }
       if (gate.canArchive && existing?.id) {
-        await admin.from("differentiation_families")
+        const { error: archiveError } = await admin.from("differentiation_families")
           .update({ review_status: "archived" })
           .eq("id", existing.id)
           .is("published_exercise_id", null)
           .neq("review_status", "published");
+        if (archiveError) return json(409, { error: "FACTS_REVISION_REGENERATION_FORBIDDEN" });
       }
     }
 
@@ -213,10 +228,18 @@ Deno.serve(async (request) => {
       source_content_hash: source.content_hash,
       target_level: targetLevel,
       generation_status: "generating",
+      // Checked under the source row lock by guard_studio_facts_generation.
+      payload: { generation_facts_guard: {
+        facts_hash: (revisionFamilies ?? []).find(row => row.payload?.facts_revision)?.payload?.facts?.facts_hash ?? null,
+        correctif_05a_c: body.correctif_05a_c === true,
+      } },
       created_by: user.id,
       generation_started_at: new Date().toISOString(),
     }).select("id").single();
     if (created.error) {
+      if (["40001", "40P01", "55P03"].includes(created.error.code)) {
+        return json(409, { error: "FACTS_GENERATION_REVISION_CONFLICT" });
+      }
       if (isPostgresUniqueViolation(created.error)) {
         const { data: conflictRow } = await admin.from("differentiation_families")
           .select("id, generation_status, payload, review_status, published_exercise_id")
@@ -280,6 +303,9 @@ Deno.serve(async (request) => {
       }
     }
 
+    if (!facts && (revisionFamilies ?? []).some(row => row.payload?.facts_revision)) {
+      throw new Error("REVISED_FACTS_REUSE_REQUIRED");
+    }
     if (!facts) {
       const factResponse = await geminiJson(
         `${FACT_EXTRACTION_PROMPT_HEADER}\n${sourceContext}`,
@@ -461,7 +487,7 @@ ${JSON.stringify(facts)}`,
       payload: family,
     });
   } catch (error) {
-    if (familyId) {
+    if (familyId && admin) {
       await admin.from("differentiation_families").update({
         generation_status: "failed",
         generation_error: { message: error instanceof Error ? error.message : "Unknown error" },

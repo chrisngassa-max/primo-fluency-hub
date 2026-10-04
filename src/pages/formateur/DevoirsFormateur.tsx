@@ -63,7 +63,7 @@ const DevoirsFormateur = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(id, titre, competence, format, difficulte, consigne, contenu, niveau_vise, formateur_id, point_a_maitriser_id), eleve:profiles!devoirs_eleve_id_fkey(id, prenom, nom)")
+        .select("*, exercice:exercices!devoirs_exercice_id_fkey(id, titre, competence, format, difficulte, consigne, contenu, niveau_vise, formateur_id, point_a_maitriser_id), eleve:profiles!devoirs_eleve_id_fkey(id, prenom, nom)")
         .eq("formateur_id", user!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;

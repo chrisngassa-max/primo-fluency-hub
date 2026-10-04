@@ -158,7 +158,7 @@ export default function RapportsPage() {
     const devoirsQuery = applyDateFloor(
       supabase
         .from("devoirs")
-        .select("*, exercices(competence, titre)")
+        .select("*, exercices!devoirs_exercice_id_fkey(competence, titre)")
         .eq("eleve_id", selectedEleve),
       periode,
       dateDebutStr,

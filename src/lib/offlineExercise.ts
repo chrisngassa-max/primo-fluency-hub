@@ -1,3 +1,4 @@
+import { consentCapabilities, isDeterministicWrittenHomework } from "@/lib/homeworkConsent";
 import { supabase } from "@/integrations/supabase/client";
 
 const DB_NAME = "captcf-offline";
@@ -98,6 +99,16 @@ function blobToBase64(blob: Blob): Promise<string> {
 }
 
 async function submitPending(item: PendingSubmission) {
+  // A pending submission must not reuse permissions from before a revocation.
+  const { data: consent, error: consentError } = await supabase.from("ai_processing_consents")
+    .select("consent_ai,consent_biometric,revoked_at").eq("user_id", item.userId).maybeSingle();
+  if (consentError) throw consentError;
+  const capabilities = consentCapabilities(consent);
+  const { data: devoir, error: devoirError } = await supabase.from("devoirs")
+    .select("exercice:exercices!devoirs_exercice_id_fkey(competence,format,contenu)").eq("id", item.devoirId).eq("eleve_id", item.userId).single();
+  if (devoirError) throw devoirError;
+  if (!(item.kind === "text" && isDeterministicWrittenHomework(devoir?.exercice))
+    && !(capabilities.ai && capabilities.voice)) throw new Error("Consentement requis pour cette fonctionnalité");
   if (item.kind === "text") {
     const { data, error } = await supabase.functions.invoke("submit-devoir-result", {
       body: { devoir_id: item.devoirId, answers: item.answers },
@@ -131,8 +142,8 @@ async function submitPending(item: PendingSubmission) {
 }
 
 export async function syncPendingSubmissions(userId?: string) {
-  if (!navigator.onLine) return 0;
-  const pending = (await listPendingSubmissions()).filter((item) => !userId || item.userId === userId);
+  if (!navigator.onLine || !userId) return 0;
+  const pending = (await listPendingSubmissions()).filter((item) => item.userId === userId);
   let synced = 0;
 
   for (const item of pending) {

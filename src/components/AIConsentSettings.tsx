@@ -29,7 +29,7 @@ export default function AIConsentSettings() {
     const { error } = await accept(false, false, "settings_revoke");
     if (error) toast.error("Erreur");
     else {
-      toast.message("Consentement retiré. Accès pédagogique bloqué.");
+      toast.message("Consentements retirés. Les devoirs écrits déterministes restent accessibles.");
       await refresh();
     }
     setConfirmRevoke(false);
@@ -40,7 +40,7 @@ export default function AIConsentSettings() {
       <CardHeader>
         <CardTitle>Consentement IA et voix</CardTitle>
         <CardDescription>
-          Le traitement IA et le traitement vocal sont nécessaires à l'exécution de la formation sur captcf.fr.
+          Choisissez les fonctionnalités IA et vocales que vous autorisez. Les devoirs écrits déterministes restent accessibles sans ces accords.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -88,7 +88,7 @@ export default function AIConsentSettings() {
               Confirmer le retrait
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Si tu retires ton accord, tu ne pourras plus utiliser les exercices, devoirs, corrections et le suivi de formation sur cette plateforme.
+              Si tu retires tes accords, les fonctionnalités correspondantes seront désactivées. Les devoirs écrits déterministes resteront accessibles.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

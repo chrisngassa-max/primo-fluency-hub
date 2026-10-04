@@ -105,16 +105,12 @@ export async function fetchDifferentiationFamilyFeedback(familyId: string): Prom
 
 export async function generateDifferentiationFamily(
   sourceId: string,
-  options: { forceRegenerate?: boolean; targetLevel?: SliceLevel; correctif05aC?: boolean } = {},
+  options: { forceRegenerate?: boolean; targetLevel?: SliceLevel } = {},
 ) {
-  const { forceRegenerate = false, targetLevel = "A2", correctif05aC = false } = options;
+  const { forceRegenerate = false, targetLevel = "A2" } = options;
   const { data, error } = await supabase.functions.invoke("generate-differentiation-family", {
-    body: {
-      sourceId,
-      force_regenerate: forceRegenerate,
-      target_level: targetLevel,
-      correctif_05a_c: correctif05aC,
-    },
+    // Shared by Studio and the source bank: never opt back into per-level fact extraction.
+    body: { sourceId, force_regenerate: forceRegenerate, target_level: targetLevel, correctif_05a_c: true },
   });
   if (error) throw error;
   if (data?.error) {

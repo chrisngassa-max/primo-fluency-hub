@@ -30,6 +30,7 @@ import ReportProblemButton from "@/components/ReportProblemButton";
 import RegenerateItemButton from "@/components/RegenerateItemButton";
 import { useSessionExercicesRealtime } from "@/hooks/useSessionExercicesRealtime";
 import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
+import { usePedagogicalHelpContext } from "@/hooks/usePedagogicalHelpContext";
 import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
 import { qualitativeProgress } from "@/lib/qualitativeProgress";
@@ -286,6 +287,7 @@ const BilanSeance = () => {
   });
   const exerciseSupportText = getExerciseSupportText(currentEx);
   const currentAnswers = answers[currentEx?.id] ?? {};
+  usePedagogicalHelpContext(currentEx?.id && sessionId ? { exerciseId: currentEx.id, sessionId, itemIndex: 0 } : null, currentItems.length);
 
   // ─── LIVE SYNC: upsert exercise_attempts sur l'exercice courant ───
   // Permet au formateur de voir l'avancement en direct (Realtime).

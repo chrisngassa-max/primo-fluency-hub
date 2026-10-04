@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SandboxProvider } from "@/contexts/SandboxContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import WrittenHomeworkRoute from "@/components/WrittenHomeworkRoute";
+import { HomeworkConsentProvider } from "@/contexts/HomeworkConsentContext";
 import AIConsentRequiredRoute from "@/components/AIConsentRequiredRoute";
 import SandboxEmbedBootstrap from "@/components/sandbox/SandboxEmbedBootstrap";
 import { isSandboxEmbed } from "@/integrations/supabase/sandboxEmbed";
@@ -71,6 +73,8 @@ import PositionnementPassation from "@/pages/eleve/PositionnementPassation";
 import PositionnementResultat from "@/pages/eleve/PositionnementResultat";
 import RessourcesPage from "@/pages/formateur/RessourcesPage";
 import PedagogicalSourcesPage from "@/pages/formateur/PedagogicalSourcesPage";
+import StudioAudioPage from "@/pages/formateur/StudioAudioPage";
+import StudioAudioWizardPage from "@/pages/formateur/StudioAudioWizardPage";
 import BanqueActivites from "@/pages/formateur/BanqueActivites";
 import BilansAtelierPage from "@/pages/formateur/BilansAtelierPage";
 import PositionnementPage from "@/pages/formateur/PositionnementPage";
@@ -107,7 +111,7 @@ const App = () => (
                   path="/eleve"
                   element={
                     <ProtectedRoute requiredRole="eleve">
-                      <EleveLayout />
+                      <HomeworkConsentProvider><EleveLayout /></HomeworkConsentProvider>
                     </ProtectedRoute>
                   }
                 >
@@ -124,13 +128,13 @@ const App = () => (
                   <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
                   <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />
-                  <Route path="devoirs" element={<AIConsentRequiredRoute><EleveDevoirs /></AIConsentRequiredRoute>} />
+                  <Route path="devoirs" element={<EleveDevoirs />} />
                   <Route path="carnet" element={<AIConsentRequiredRoute><CarnetMots /></AIConsentRequiredRoute>} />
                   <Route path="bilan/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
                   <Route path="exercices-seance/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
                   <Route path="bilan-test/:testId" element={<AIConsentRequiredRoute><BilanTestPassation /></AIConsentRequiredRoute>} />
                   <Route path="bilan-devoirs/:bilanId" element={<AIConsentRequiredRoute><BilanDevoirs /></AIConsentRequiredRoute>} />
-                  <Route path="devoirs/:devoirId" element={<AIConsentRequiredRoute><DevoirPassation /></AIConsentRequiredRoute>} />
+                  <Route path="devoirs/:devoirId" element={<WrittenHomeworkRoute><DevoirPassation /></WrittenHomeworkRoute>} />
                   <Route path="progression" element={<AIConsentRequiredRoute><EleveProgression /></AIConsentRequiredRoute>} />
                 </Route>
                 <Route path="*" element={<Navigate to="/eleve" replace />} />
@@ -190,6 +194,8 @@ const App = () => (
               <Route path="test-resultats/:apprenantId" element={<TestResultatDetail />} />
               <Route path="ressources" element={<RessourcesPage />} />
               <Route path="sources-pedagogiques" element={<PedagogicalSourcesPage />} />
+              <Route path="studio-audio" element={<StudioAudioPage />} />
+              <Route path="studio-audio/:sourceId" element={<StudioAudioWizardPage />} />
               <Route path="intervention" element={<InterventionRapidePage />} />
               <Route path="bibliotheque-interventions" element={<BibliothequeInterventions />} />
               <Route path="banque-activites" element={<BanqueActivites />} />
@@ -213,7 +219,7 @@ const App = () => (
               path="/eleve"
               element={
                 <ProtectedRoute requiredRole="eleve">
-                  <EleveLayout />
+                  <HomeworkConsentProvider><EleveLayout /></HomeworkConsentProvider>
                 </ProtectedRoute>
               }
             >
@@ -230,13 +236,13 @@ const App = () => (
               <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
               <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />
-              <Route path="devoirs" element={<AIConsentRequiredRoute><EleveDevoirs /></AIConsentRequiredRoute>} />
+              <Route path="devoirs" element={<EleveDevoirs />} />
               <Route path="carnet" element={<AIConsentRequiredRoute><CarnetMots /></AIConsentRequiredRoute>} />
               <Route path="bilan/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
               <Route path="exercices-seance/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
               <Route path="bilan-test/:testId" element={<AIConsentRequiredRoute><BilanTestPassation /></AIConsentRequiredRoute>} />
               <Route path="bilan-devoirs/:bilanId" element={<AIConsentRequiredRoute><BilanDevoirs /></AIConsentRequiredRoute>} />
-              <Route path="devoirs/:devoirId" element={<AIConsentRequiredRoute><DevoirPassation /></AIConsentRequiredRoute>} />
+              <Route path="devoirs/:devoirId" element={<WrittenHomeworkRoute><DevoirPassation /></WrittenHomeworkRoute>} />
               <Route path="progression" element={<AIConsentRequiredRoute><EleveProgression /></AIConsentRequiredRoute>} />
             </Route>
 

@@ -172,7 +172,7 @@ export function useSeanceExercices(sessionId: string | null | undefined, eleveId
       // 2) Devoirs rattachés à cette séance (persistés, jamais archivés côté élève).
       const { data: devoirs } = await supabase
         .from("devoirs")
-        .select("id, exercice_id, statut, exercice:exercices(id, titre, competence)")
+        .select("id, exercice_id, statut, exercice:exercices!devoirs_exercice_id_fkey(id, titre, competence)")
         .eq("eleve_id", eleveId)
         .eq("session_id", sessionId)
         .neq("statut", "archive" as any);

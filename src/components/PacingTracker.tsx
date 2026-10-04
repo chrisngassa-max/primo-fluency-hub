@@ -107,7 +107,7 @@ export function StudentPacingCard({ eleveId, detailed = false }: { eleveId: stri
       // Get completed homework
       const { data: devoirs } = await supabase
         .from("devoirs")
-        .select("id, exercice:exercices(competence)")
+        .select("id, exercice:exercices!devoirs_exercice_id_fkey(competence)")
         .eq("eleve_id", eleveId)
         .eq("statut", "fait");
 
@@ -245,7 +245,7 @@ export default function PacingTracker() {
       const [{ data: profiles }, { data: profils }, { data: devoirs }, { data: sessions }] = await Promise.all([
         supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds),
         supabase.from("profils_eleves").select("eleve_id, taux_reussite_global").in("eleve_id", eleveIds),
-        supabase.from("devoirs").select("eleve_id, exercice:exercices(competence)").eq("statut", "fait").in("eleve_id", eleveIds),
+        supabase.from("devoirs").select("eleve_id, exercice:exercices!devoirs_exercice_id_fkey(competence)").eq("statut", "fait").in("eleve_id", eleveIds),
         supabase.from("sessions").select("id, group_id, statut, duree_minutes").in("group_id", groupIds).eq("statut", "terminee"),
       ]);
 
@@ -309,7 +309,7 @@ export default function PacingTracker() {
           ? supabase.from("profils_eleves").select("eleve_id, taux_reussite_global").in("eleve_id", eleveIds)
           : { data: [] },
         eleveIds.length > 0
-          ? supabase.from("devoirs").select("eleve_id, exercice:exercices(competence)").eq("statut", "fait").in("eleve_id", eleveIds)
+          ? supabase.from("devoirs").select("eleve_id, exercice:exercices!devoirs_exercice_id_fkey(competence)").eq("statut", "fait").in("eleve_id", eleveIds)
           : { data: [] },
       ]);
 

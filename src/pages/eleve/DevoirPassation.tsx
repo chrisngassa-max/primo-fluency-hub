@@ -1,3 +1,4 @@
+import { withHomeworkConsent, useHomeworkConsent } from "@/contexts/HomeworkConsentContext";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,13 +16,13 @@ import {
   ArrowLeft, CheckCircle2, Loader2, Send, FileText, Mic, Square, Clock, Smile, Meh, Frown, BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
-import CoAudioPlayer from "@/components/eleve/CoAudioPlayer";
+import RawTTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import RawCoAudioPlayer from "@/components/eleve/CoAudioPlayer";
 import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 import ReportProblemButton from "@/components/ReportProblemButton";
-import RegenerateItemButton from "@/components/RegenerateItemButton";
-import SmartText from "@/components/SmartText";
-import SmartTextHint from "@/components/SmartTextHint";
+import RawRegenerateItemButton from "@/components/RegenerateItemButton";
+import RawSmartText from "@/components/SmartText";
+import RawSmartTextHint from "@/components/SmartTextHint";
 import { evaluerReponseIA } from "@/lib/testPositionnement";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -30,12 +31,13 @@ import {
   startWavRecording,
 } from "@/lib/audioRecorder";
 import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
+import { usePedagogicalHelpContext } from "@/hooks/usePedagogicalHelpContext";
 import { emitLiveEvent } from "@/lib/liveEventEmitter";
 import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
-import InterventionPlayer from "@/components/eleve/InterventionPlayer";
+import RawInterventionPlayer from "@/components/eleve/InterventionPlayer";
 import LearnerAccessibilityToolbar from "@/components/eleve/LearnerAccessibilityToolbar";
-import TranslatedInstruction from "@/components/eleve/TranslatedInstruction";
+import RawTranslatedInstruction from "@/components/eleve/TranslatedInstruction";
 import {
   learnerTextSizeClass,
   remainingAudioPlays,
@@ -149,6 +151,7 @@ function DevoirFeedbackCard({
 }
 
 const DevoirPassation = () => {
+  const homeworkConsent = useHomeworkConsent();
   const { devoirId } = useParams<{ devoirId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -198,7 +201,7 @@ const DevoirPassation = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise, variante_niveau_bas, variante_niveau_haut, metadata_code, metadata_skill, sous_competence, duree_limite_secondes, aides_disponibles, nombre_ecoutes_max, transcription_verrouillee, objectif_tcf, type_differenciation)")
+        .select("*, exercice:exercices!devoirs_exercice_id_fkey(id, titre, consigne, competence, format, contenu, niveau_vise, variante_niveau_bas, variante_niveau_haut, metadata_code, metadata_skill, sous_competence, duree_limite_secondes, aides_disponibles, nombre_ecoutes_max, transcription_verrouillee, objectif_tcf, type_differenciation)")
         .eq("id", devoirId!)
         .eq("eleve_id", user!.id)
         .single();
@@ -248,6 +251,7 @@ const DevoirPassation = () => {
   const rawItems: any[] = contenu?.items ?? [];
   const items: any[] = rawItems.map((it, idx) => itemOverrides[idx] ? { ...it, ...itemOverrides[idx] } : it);
   const isDone = devoir?.statut === "fait" || devoir?.statut === "arrete";
+  usePedagogicalHelpContext(ex?.id && devoirId ? { exerciseId: ex.id, devoirId, itemIndex: 0 } : null, items.length);
   const metadata = contenu?.metadata;
   const lesson = contenu?.lesson as {
     title?: string;
@@ -441,7 +445,7 @@ const DevoirPassation = () => {
             contenu_texte: p.contenu_texte ?? "",
             audio_url: p.audio_url ?? null,
           });
-          if (p.audio_url) {
+          if (p.audio_url && homeworkConsent.ai && homeworkConsent.voice && !homeworkConsent.loading) {
             interventionAudioRef.current?.pause();
             interventionAudioRef.current = new Audio(p.audio_url);
             interventionAudioRef.current.play().catch(() => {});
@@ -450,8 +454,8 @@ const DevoirPassation = () => {
       )
       .subscribe();
 
-    return () => { supabase.removeChannel(ch); };
-  }, [(devoir as any)?.session_id, user?.id]);
+    return () => { supabase.removeChannel(ch); interventionAudioRef.current?.pause(); };
+  }, [(devoir as any)?.session_id, user?.id, homeworkConsent.ai, homeworkConsent.voice, homeworkConsent.loading]);
 
   // La finalisation "completed" est gérée par le trigger mirror_resultat_to_attempt
   // lors de l'insert dans `resultats`.
@@ -469,6 +473,7 @@ const DevoirPassation = () => {
 
   const startRecording = async () => {
     try {
+      if (homeworkConsent.loading || !homeworkConsent.ai || !homeworkConsent.voice) return;
       const stream = await requestMicrophoneStream();
       const recorder = startWavRecording(stream, (blob) => {
         setAudioBlob(blob);
@@ -501,7 +506,7 @@ const DevoirPassation = () => {
 
   const triggerBilanGeneration = async (score: number, correction: any[]) => {
     try {
-      if (!devoir || !user) return;
+      if (!devoir || !user || homeworkConsent.loading || !homeworkConsent.ai) return;
       const { data: profile } = await supabase.from("profiles").select("nom, prenom").eq("id", user.id).single();
       const eleveNom = profile ? `${profile.prenom} ${profile.nom}` : "Élève";
       let sessionTitle = "Séance";
@@ -549,6 +554,7 @@ const DevoirPassation = () => {
   };
 
   const handleSubmitOral = useCallback(async () => {
+    if (homeworkConsent.loading || !homeworkConsent.ai || !homeworkConsent.voice) return;
     if (!devoir || !ex || !user || !audioBlob) return;
     if (!navigator.onLine && draftKey) {
       await queueSubmission({
@@ -664,7 +670,7 @@ const DevoirPassation = () => {
     } finally {
       setSubmitting(false);
     }
-  }, [devoir, ex, user, audioBlob, devoirId, contenu, metadata, draftKey, navigate]);
+  }, [devoir, ex, user, audioBlob, devoirId, contenu, metadata, draftKey, navigate, homeworkConsent]);
 
   const maybeEmitRandomClick = useCallback((item: any, idx: number, chosen: string) => {
     const sessionId = (devoir as any)?.session_id as string | null;
@@ -781,7 +787,7 @@ const DevoirPassation = () => {
     } finally {
       setSubmitting(false);
     }
-  }, [devoir, ex, user, items, answers, devoirId, draftKey, navigate, eeWordStatus]);
+  }, [devoir, ex, user, items, answers, devoirId, draftKey, navigate, eeWordStatus, homeworkConsent]);
 
   // Format timer display
   const formatTime = (seconds: number) => {
@@ -957,6 +963,7 @@ const DevoirPassation = () => {
       learnerTextSizeClass(textSize),
       highContrast && "learner-high-contrast"
     )}>
+      {(!homeworkConsent.ai || !homeworkConsent.voice) && <p className="text-sm text-muted-foreground">Ce devoir écrit reste accessible. Les aides IA et vocales dépendent de vos choix dans votre profil.</p>}
       <InterventionPlayer sessionId={(devoir as any)?.session_id ?? null} />
       <LearnerAccessibilityToolbar
         textSize={textSize}
@@ -1401,3 +1408,17 @@ const DevoirPassation = () => {
 };
 
 export default DevoirPassation;
+
+const TTSAudioPlayer = withHomeworkConsent(RawTTSAudioPlayer, "both");
+
+const CoAudioPlayer = withHomeworkConsent(RawCoAudioPlayer, "both");
+
+const SmartText = withHomeworkConsent(RawSmartText, "ai", (props) => <span>{props.text}</span>);
+
+const SmartTextHint = withHomeworkConsent(RawSmartTextHint, "ai");
+
+const RegenerateItemButton = withHomeworkConsent(RawRegenerateItemButton, "ai");
+
+const TranslatedInstruction = withHomeworkConsent(RawTranslatedInstruction, "ai");
+
+const InterventionPlayer = withHomeworkConsent(RawInterventionPlayer, "both");

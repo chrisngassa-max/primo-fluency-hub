@@ -118,6 +118,9 @@ const TRAINING_EXACT = new Set([
   "/eleve/devoirs",
   "/eleve/carnet",
   "/eleve/progression",
+  "/eleve/profil",
+  "/eleve/acces-limite",
+  "/eleve/test-positionnement",
 ]);
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -175,7 +178,8 @@ function welcomeKind(question: string): "today" | "devoirs" | "seance" | "activi
 
 export function modeFromStudentPath(path: string | null | undefined): ActivityMode {
   const value = path ?? "";
-  if (/\/test-positionnement\/passer\//.test(value) || /\/bilan-test\//.test(value)) {
+  // Passation active seulement — les bilans post-test restent en orientation (entrainement).
+  if (/\/test-positionnement\/passer\//.test(value)) {
     return "evaluation";
   }
   if (/\/devoirs\/[^/]+/.test(value)) return "devoir";

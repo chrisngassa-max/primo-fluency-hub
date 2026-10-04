@@ -59,7 +59,7 @@ const SuiviDevoirsPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(titre, competence), eleve:profiles!devoirs_eleve_id_fkey(prenom, nom)")
+        .select("*, exercice:exercices!devoirs_exercice_id_fkey(titre, competence), eleve:profiles!devoirs_eleve_id_fkey(prenom, nom)")
         .eq("formateur_id", user!.id)
         .eq("statut", "expire")
         .order("updated_at", { ascending: false })
@@ -292,7 +292,7 @@ const SuiviDevoirsPage = () => {
       // Get devoirs with source_label (jour_X)
       const { data: devoirs } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(titre, competence)")
+        .select("*, exercice:exercices!devoirs_exercice_id_fkey(titre, competence)")
         .eq("formateur_id", user!.id)
         .not("source_label", "is", null)
         .order("date_echeance", { ascending: true });

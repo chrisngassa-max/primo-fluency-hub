@@ -164,7 +164,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
       // 3. Homework: ALL devoirs for group members between prev and current session
       const { data: devoirs } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(titre, competence)")
+        .select("*, exercice:exercices!devoirs_exercice_id_fkey(titre, competence)")
         .in("eleve_id", memberIds)
         .gte("created_at", prevSessions[0].date_seance || "2000-01-01")
         .lt("created_at", session.date_seance);
@@ -172,7 +172,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
       // Also include devoirs explicitly linked to the previous session
       const { data: sessionDevoirs } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(titre, competence)")
+        .select("*, exercice:exercices!devoirs_exercice_id_fkey(titre, competence)")
         .eq("session_id", prevSessionId);
 
       // Merge and deduplicate

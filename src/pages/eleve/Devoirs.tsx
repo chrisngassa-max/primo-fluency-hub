@@ -24,7 +24,7 @@ const EleveDevoirs = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(id, titre, competence, consigne, format, contenu)")
+        .select("*, exercice:exercices!devoirs_exercice_id_fkey(id, titre, competence, consigne, format, contenu)")
         .eq("eleve_id", user!.id)
         // Hide archived from the student
         .neq("statut", "archive" as any)

@@ -2,11 +2,11 @@
     "schemaVersion":  1,
     "project":  "CapTCF",
     "syncBranch":  "sync/captcf-travail",
-    "metierBranch":  "captcf-lot-02-assistant-aide-pedagogique",
-    "metierHead":  "75b6e7f774a78d586b5001b24738d252228ffd9d",
-    "transmittedAt":  "2026-09-28T07:53:03.9194398+02:00",
-    "transmittedFrom":  "DESKTOP-4OC0EG3",
-    "nextWork":  "Reprendre CapTCF Lot 2A (assistant aide pedagogique) depuis captcf-lot-02-assistant-aide-pedagogique.",
+    "metierBranch":  "captcf-p0-6-attempt-sync-queue-diagnostic",
+    "metierHead":  "47fdfff4827487c3253927aba0a925e1c7aac1b4",
+    "transmittedAt":  "2026-10-04T08:32:41.6095204+02:00",
+    "transmittedFrom":  "CHRISTIAN",
+    "nextWork":  "Reprendre CapTCF depuis la branche metier ; assets via captcf-private-assets.",
     "neverMergeToMain":  true,
     "privateAssets":  {
                           "whitelist":  [

@@ -140,7 +140,7 @@ export default function LiveExercisesPanel({
       const { data, error } = await supabase
         .from("devoirs")
         .select(
-          "id, exercice_id, eleve_id, statut, created_at, contexte, exercice:exercices(id, titre, competence, format, contenu)"
+          "id, exercice_id, eleve_id, statut, created_at, contexte, exercice:exercices!devoirs_exercice_id_fkey(id, titre, competence, format, contenu)"
         )
         .in("eleve_id", memberIds)
         .gte("created_at", sessionDayStart)

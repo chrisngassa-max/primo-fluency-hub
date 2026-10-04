@@ -98,7 +98,7 @@ async function loadPreviousHomeworkPerformance(sessionId?: string): Promise<Comp
 
   const { data: devoirs } = await supabase
     .from("devoirs")
-    .select("id, exercice:exercices(competence)")
+    .select("id, exercice:exercices!devoirs_exercice_id_fkey(competence)")
     .eq("session_id", sessionId);
 
   if (!devoirs || devoirs.length === 0) return [];

@@ -14,9 +14,9 @@ export default function AccesLimite() {
           <CardHeader>
             <CardTitle>Accès limité</CardTitle>
             <CardDescription>
-              Cette formation utilise l'intelligence artificielle et l'enregistrement vocal pour fonctionner.
-              Ces traitements sont nécessaires pour corriger les exercices, suivre la progression et préparer les devoirs.
-              Si vous refusez, vous ne pourrez pas suivre la formation sur captcf.fr.
+              Les fonctionnalités IA et vocales dépendent de vos consentements.
+              Les devoirs écrits déterministes restent accessibles sans ces accords.
+              Les autres parcours conservent leurs conditions d'accès.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -24,6 +24,7 @@ export default function AccesLimite() {
               Vous pouvez modifier votre choix ci-dessous, consulter la politique de confidentialité ou vous déconnecter.
             </p>
             <div className="flex flex-wrap gap-2">
+              <Button asChild><Link to="/eleve/devoirs">Mes devoirs écrits</Link></Button>
               <Button asChild variant="outline">
                 <Link to="/legal">Lire la politique de confidentialité</Link>
               </Button>
