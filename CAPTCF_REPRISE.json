@@ -4,8 +4,8 @@
     "syncBranch":  "sync/captcf-travail",
     "metierBranch":  "captcf-p0-6-attempt-sync-queue-diagnostic",
     "metierHead":  "7cc9acc147940ce1fc5622b6ed87733499096916",
-    "transmittedAt":  "2026-10-05T07:41:05.0229411+02:00",
-    "transmittedFrom":  "",
+    "transmittedAt":  "2026-10-05T07:42:53.5208671+02:00",
+    "transmittedFrom":  "DESKTOP-4OC0EG3",
     "nextWork":  "Reprendre CapTCF depuis la branche metier ; assets via captcf-private-assets.",
     "neverMergeToMain":  true,
     "privateAssets":  {
