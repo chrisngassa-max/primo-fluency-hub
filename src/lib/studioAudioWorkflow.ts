@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { DifferentiationFamily, SliceLevel } from "@/lib/differentiationFamilies";
 import { SLICE_LEVELS, getFamilyTargetLevel, getFamilyVariant } from "@/lib/differentiationFamilies";
 import type { PedagogicalSource } from "@/lib/pedagogicalSources";

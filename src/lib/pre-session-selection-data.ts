@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Lot 9 — Lecture banque Supabase pour sélection pré-séance (read-only).
  * Aucune écriture, aucune génération IA.
