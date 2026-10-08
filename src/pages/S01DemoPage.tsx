@@ -281,7 +281,7 @@ export default function S01DemoPage() {
                       <span className={`flex h-6 min-w-6 items-center justify-center rounded-full text-xs font-bold ${active ? "bg-blue-700 text-white" : "bg-slate-100 text-slate-700"}`}>{index + 1}</span>
                       <span className="min-w-0 flex-1">
                         <span className="block font-semibold text-slate-900">{entry.titre}</span>
-                        <span className="mt-0.5 block text-xs text-slate-500">{entry.competence} · {entry.format.replaceAll("_", " ")} · {entry.items.length} item(s)</span>
+                        <span className="mt-0.5 block text-xs text-slate-500">{entry.competence} · {entry.format.split("_").join( " ")} · {entry.items.length} item(s)</span>
                       </span>
                       {done && <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" aria-label="Exercice terminé" />}
                     </button>
@@ -302,7 +302,7 @@ export default function S01DemoPage() {
                 </p>
                 <h2 className="mt-1 text-xl font-bold">{exercise.titre}</h2>
               </div>
-              <div className="flex gap-1.5"><Badge variant="outline">{exercise.niveau_vise}</Badge><Badge variant="outline">{exercise.competence}</Badge><Badge variant="outline">{exercise.format.replaceAll("_", " ")}</Badge></div>
+              <div className="flex gap-1.5"><Badge variant="outline">{exercise.niveau_vise}</Badge><Badge variant="outline">{exercise.competence}</Badge><Badge variant="outline">{exercise.format.split("_").join( " ")}</Badge></div>
             </div>
             <p className="rounded-lg bg-blue-50 p-3 text-sm text-blue-950">{exercise.consigne}</p>
 
