@@ -40,6 +40,7 @@ import { detectAdvancedStudentsBatch, type AdvancedSignal } from "@/lib/detectAd
 import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
 import { GroupeNiveauxMap, type EleveAvecNiveaux } from "@/components/formateur/GroupeNiveauxMap";
 import { useSandbox } from "@/contexts/SandboxContext";
+import AttendanceSummaryDialog from "@/components/formateur/AttendanceSummaryDialog";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -712,7 +713,8 @@ const GroupesPage = () => {
 
                   <AccordionContent className="px-4 pb-4 pt-0">
                     {/* Action buttons */}
-                    <div className="flex justify-end gap-2 mb-3">
+                    <div className="flex flex-wrap justify-end gap-2 mb-3">
+                      <AttendanceSummaryDialog group={g} members={members} />
                       <Button size="sm" onClick={() => openInvite(g.id, g.nom)}>
                         <Ticket className="h-4 w-4 mr-2" />Inviter par lien
                       </Button>

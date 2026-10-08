@@ -20,6 +20,7 @@ import {
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { activateSessionForStudents } from "@/lib/sessionDistribution";
+import { readPresenceDuration, writePresenceDuration } from "@/lib/attendanceSummary";
 
 interface FeuilleAppelProps {
   sessionId: string;
@@ -38,6 +39,7 @@ export default function FeuilleAppel({ sessionId, session }: FeuilleAppelProps) 
   const qc = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [presenceState, setPresenceState] = useState<Record<string, { present: boolean; commentaire: string }>>({});
+  const [followedMinutes, setFollowedMinutes] = useState<Record<string, string>>({});
 
   const groupId = (session as any)?.group?.id || session.group_id;
 
@@ -75,14 +77,18 @@ export default function FeuilleAppel({ sessionId, session }: FeuilleAppelProps) 
   useEffect(() => {
     if (!members) return;
     const state: Record<string, { present: boolean; commentaire: string }> = {};
+    const durations: Record<string, string> = {};
     members.forEach((m) => {
       const existing = existingPresences?.find((p: any) => p.eleve_id === m.eleve_id);
       state[m.eleve_id] = {
         present: existing ? existing.present : false,
-        commentaire: existing?.commentaire || "",
+        commentaire: readPresenceDuration(existing?.commentaire ?? null).comment,
       };
+      const duration = readPresenceDuration(existing?.commentaire ?? null).minutes;
+      durations[m.eleve_id] = duration === null ? "" : String(duration);
     });
     setPresenceState(state);
+    setFollowedMinutes(durations);
   }, [members, existingPresences]);
 
   const togglePresence = (eleveId: string) => {
@@ -109,13 +115,17 @@ export default function FeuilleAppel({ sessionId, session }: FeuilleAppelProps) 
 
   const handleSave = async () => {
     if (!members) return;
+    if (members.some(m => presenceState[m.eleve_id]?.present && followedMinutes[m.eleve_id] !== "" && followedMinutes[m.eleve_id] !== undefined && (!Number.isInteger(Number(followedMinutes[m.eleve_id])) || Number(followedMinutes[m.eleve_id]) < 0 || Number(followedMinutes[m.eleve_id]) > session.duree_minutes))) {
+      toast.error(`La durée suivie doit être comprise entre 0 et ${session.duree_minutes} minutes.`);
+      return;
+    }
     setSaving(true);
     try {
       const upserts = members.map((m) => ({
         session_id: sessionId,
         eleve_id: m.eleve_id,
         present: presenceState[m.eleve_id]?.present ?? false,
-        commentaire: presenceState[m.eleve_id]?.commentaire || null,
+        commentaire: writePresenceDuration(presenceState[m.eleve_id]?.commentaire || "", presenceState[m.eleve_id]?.present && followedMinutes[m.eleve_id] ? Number(followedMinutes[m.eleve_id]) : null),
         updated_at: new Date().toISOString(),
       }));
 
@@ -314,6 +324,7 @@ ${totalCount - presentCount > 0 ? `❌ Absents : ${absentNames}` : "🎉 Aucune 
                 <TableHead className="w-[50px]">N°</TableHead>
                 <TableHead>Nom & Prénom</TableHead>
                 <TableHead className="w-[80px] text-center">Présent</TableHead>
+                <TableHead>Minutes suivies (si présence partielle)</TableHead>
                 <TableHead className="hidden md:table-cell">Observation</TableHead>
               </TableRow>
             </TableHeader>
@@ -334,6 +345,15 @@ ${totalCount - presentCount > 0 ? `❌ Absents : ${absentNames}` : "🎉 Aucune 
                         checked={presenceState[m.eleve_id]?.present ?? false}
                         onCheckedChange={() => togglePresence(m.eleve_id)}
                       />
+                    </TableCell>
+                    <TableCell>
+                      <Input type="number" min={0} max={session.duree_minutes} step={1}
+                        aria-label={`Minutes suivies par ${m.nom} ${m.prenom}`}
+                        placeholder={`Total : ${session.duree_minutes}`}
+                        disabled={!presenceState[m.eleve_id]?.present}
+                        value={followedMinutes[m.eleve_id] ?? ""}
+                        onChange={e => setFollowedMinutes(prev => ({ ...prev, [m.eleve_id]: e.target.value }))}
+                        className="h-8 text-sm" />
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       <Input
