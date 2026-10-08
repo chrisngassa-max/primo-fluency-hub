@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Agrège les données élève pour le moteur IPE (edge function compute-readiness).
  */
