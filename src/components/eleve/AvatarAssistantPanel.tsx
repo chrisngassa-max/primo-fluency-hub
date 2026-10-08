@@ -17,6 +17,10 @@ import {
 } from "@/lib/avatar/assistantConsent";
 import { cn } from "@/lib/utils";
 import { isAccueilQuestion } from "../../../supabase/functions/_shared/assistant-accueil/orchestrate";
+import {
+  hasUsableValidatedHint,
+  pedagogicalItemId,
+} from "../../../supabase/functions/_shared/assistant-pedagogique/banks/usable-validated-hints";
 import { matchEleveRoute, sensitiveContextKey } from "@/lib/avatar/eleveRouteCatalog";
 import { quickPromptsForPath } from "@/lib/avatar/answerPageOrientation";
 
@@ -99,6 +103,16 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
   const quickPrompts = useMemo(
     () => quickPromptsForPath(pageHint, Boolean(context.pedagogical)),
     [pageHint, context.pedagogical],
+  );
+
+  /** Lot 4 : bouton Indice seulement si une aide banque validée existe pour cet item. */
+  const showValidatedHintButton = Boolean(
+    context.pedagogical
+    && !isEvaluation
+    && hasUsableValidatedHint(
+      context.pedagogical.exerciseId,
+      pedagogicalItemId(context.pedagogical.itemIndex),
+    ),
   );
 
   const decideConsent = (status: "accepted" | "refused") => {
@@ -277,7 +291,13 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
           {context.pedagogical && !isEvaluation ? (
             <>
               <div className="flex flex-wrap gap-1">
-                {INTENT_BUTTONS.filter(({ intent }) => ["expliquer", "reformuler", "fournir_indice"].includes(intent)).map(({ intent, label }) => (
+                {INTENT_BUTTONS
+                  .filter(({ intent }) =>
+                    intent === "fournir_indice"
+                      ? showValidatedHintButton
+                      : ["expliquer", "reformuler"].includes(intent),
+                  )
+                  .map(({ intent, label }) => (
                   <Button
                     key={intent}
                     type="button"

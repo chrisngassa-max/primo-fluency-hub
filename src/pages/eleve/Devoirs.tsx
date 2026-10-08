@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import ResumeAssignedHomeworkCard from "@/components/eleve/ResumeAssignedHomeworkCard";
+import { buildAssignedHomeworkResume } from "../../../supabase/functions/_shared/assistant-pedagogique/assigned-homework";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -34,6 +36,46 @@ const EleveDevoirs = () => {
     },
     enabled: !!user?.id,
   });
+
+  const { data: decisions, isError: decisionsError } = useQuery({
+    queryKey: ["eleve-routing-decisions", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("routing_decisions")
+        .select("eleve_id, reason_student, context_snapshot, created_at")
+        .eq("eleve_id", user!.id);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!user?.id,
+  });
+
+  const resume = useMemo(() => {
+    if (!user?.id) {
+      return buildAssignedHomeworkResume({
+        authUserId: "00000000-0000-4000-8000-000000000000",
+        devoirs: [],
+        exercises: [],
+        decisions: [],
+      });
+    }
+    const rows = devoirs ?? [];
+    return buildAssignedHomeworkResume({
+      authUserId: user.id,
+      devoirs: rows.map((d) => ({
+        id: d.id,
+        eleve_id: d.eleve_id,
+        exercice_id: d.exercice_id,
+        statut: d.statut,
+      })),
+      exercises: rows.flatMap((d) => {
+        const ex = d.exercice as { id?: string; contenu?: unknown } | { id?: string; contenu?: unknown }[] | null;
+        const one = Array.isArray(ex) ? ex[0] : ex;
+        return one?.id ? [{ id: one.id, contenu: one.contenu }] : [];
+      }),
+      decisions: decisionsError ? [] : (decisions ?? []),
+    });
+  }, [user?.id, devoirs, decisions, decisionsError]);
 
   // Helper: a devoir is "in progress" if at least one resultat exists for the eleve
   const { data: tentativeMap } = useQuery({
@@ -69,6 +111,8 @@ const EleveDevoirs = () => {
           {pendingAll.length === 0 ? "Aucun devoir en attente" : pendingAll.length === 1 ? "1 devoir en attente" : `${pendingAll.length} devoirs en attente`}
         </p>
       </div>
+
+      <ResumeAssignedHomeworkCard resume={resume} />
 
       {/* Stats */}
       {all.length > 0 && (

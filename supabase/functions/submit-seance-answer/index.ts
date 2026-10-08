@@ -1,6 +1,11 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corrigerExerciceServer } from '../_shared/correction-server.ts';
 import { findMissingRequiredJustifications } from '../_shared/justification-guard.ts';
+import {
+  PRESENTED_HINT_KIND,
+  resolveTrustedHintTrace,
+  type HelpLiveEvent,
+} from '../_shared/assistant-pedagogique/help-trace.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -140,6 +145,23 @@ Deno.serve(async (req) => {
       serviceRoleKey: SERVICE_ROLE_KEY,
     });
 
+    // Lot 4.1 : hint_trace construite serveur. Jamais lue depuis answers client.
+    // Croisement avec session_live_events (aides réellement présentées).
+    const { data: liveHelpRows } = await admin
+      .from('session_live_events')
+      .select('event_type, session_id, eleve_id, payload')
+      .eq('session_id', sessionId)
+      .eq('eleve_id', learnerId)
+      .eq('event_type', 'aide_demandee');
+    const presentedEvents: HelpLiveEvent[] = (liveHelpRows ?? [])
+      .filter((row: { payload?: { kind?: string } }) => row?.payload?.kind === PRESENTED_HINT_KIND)
+      .map((row: { session_id: string; eleve_id: string; payload: HelpLiveEvent['payload'] }) => ({
+        event_type: 'aide_demandee' as const,
+        session_id: row.session_id,
+        eleve_id: row.eleve_id,
+        payload: row.payload,
+      }));
+
     // Stockage COMPLET (Lot 2.1, points 5/6) : le modèle de résultat riche
     // (justification_status/score/feedback/overall_status/score_provisional
     // + preuve_support/explication_distracteurs/erreur_diagnostiquee/
@@ -149,29 +171,46 @@ Deno.serve(async (req) => {
     // get-attempt-correction le lit, et seulement après libération, à
     // travers sa propre liste blanche dédiée (released-correction-filter.ts).
     const itemResults = Object.fromEntries(
-      result.correction.map((c, idx) => [
-        String(idx),
-        {
-          question: c.question,
-          reponse_donnee: c.reponse_eleve,
-          bonne_reponse: c.bonne_reponse,
-          correct: c.correct,
-          explication: c.explication ?? null,
-          learner_justification: c.learner_justification ?? null,
-          hint_used: c.hint_used ?? false,
-          answer_correct: c.answer_correct,
-          justification_status: c.justification_status,
-          justification_score: c.justification_score,
-          justification_feedback: c.justification_feedback,
-          overall_status: c.overall_status,
-          score_provisional: c.score_provisional,
-          preuve_support: c.preuve_support ?? null,
-          explication_distracteurs: c.explication_distracteurs ?? [],
-          erreur_diagnostiquee: c.erreur_diagnostiquee ?? null,
-          remediation: c.remediation ?? null,
-          justification_ouverte: c.justification_ouverte ?? null,
-        },
-      ]),
+      result.correction.map((c, idx) => {
+        const item = items[idx] ?? {};
+        const itemId = typeof item.id === 'string' && item.id.trim() ? item.id.trim() : `item_${String(idx + 1).padStart(2, '0')}`;
+        const rawAnswer = answers[idx] ?? answers[String(idx)];
+        const clientHintTrace = rawAnswer && typeof rawAnswer === 'object' && !Array.isArray(rawAnswer)
+          ? (rawAnswer as Record<string, unknown>).hint_trace
+          : undefined;
+        const hintTrace = resolveTrustedHintTrace({
+          learnerId,
+          exerciseId,
+          itemId,
+          clientHintUsed: Boolean(c.hint_used),
+          clientHintTrace,
+          presentedEvents,
+        });
+        return [
+          String(idx),
+          {
+            question: c.question,
+            reponse_donnee: c.reponse_eleve,
+            bonne_reponse: c.bonne_reponse,
+            correct: c.correct,
+            explication: c.explication ?? null,
+            learner_justification: c.learner_justification ?? null,
+            hint_used: hintTrace.presented || Boolean(c.hint_used),
+            hint_trace: hintTrace,
+            answer_correct: c.answer_correct,
+            justification_status: c.justification_status,
+            justification_score: c.justification_score,
+            justification_feedback: c.justification_feedback,
+            overall_status: c.overall_status,
+            score_provisional: c.score_provisional,
+            preuve_support: c.preuve_support ?? null,
+            explication_distracteurs: c.explication_distracteurs ?? [],
+            erreur_diagnostiquee: c.erreur_diagnostiquee ?? null,
+            remediation: c.remediation ?? null,
+            justification_ouverte: c.justification_ouverte ?? null,
+          },
+        ];
+      }),
     );
 
     const { data: attempt, error: insertError } = await admin

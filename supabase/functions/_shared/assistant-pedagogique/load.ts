@@ -1,11 +1,13 @@
 import { object, one, string, type DataStore, type Row } from './store.ts';
 import type { ActivityMode } from '../assistant-accueil/contract-v1.ts';
 import { isExerciseLinkVisible, resolveLearnerLevelForCompetence } from '../session-visibility.ts';
+import { pickLinkedHomeworkRecommendation, snapshotDevoirId } from './assigned-homework.ts';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export interface Context {
   owner: string; exerciseId: string; sessionId: string | null; devoirId: string | null;
+  attemptId: string | null; sousCompetence: string | null;
   mode: ActivityMode; instruction: string; itemType: string; competence: string;
   objective: string; level: string; itemId: string; factsHash: string;
   sourceId: string;
@@ -68,7 +70,7 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
   const evaluations = await user.read('test_sessions', 'id', { apprenant_id: uid, statut: 'en_cours' });
   if (evaluations.length) mode = 'evaluation';
 
-  const exercise = await one(content, 'exercices', 'id, consigne, competence, format, niveau_vise, contenu', { id: exerciseId });
+  const exercise = await one(content, 'exercices', 'id, consigne, competence, sous_competence, format, niveau_vise, contenu', { id: exerciseId });
   if (!exercise) throw new Error('exercise_unavailable');
   const data = object(exercise.contenu), meta = object(data.metadata), audio = object(data.audio);
   const family = await one(content, 'differentiation_families', 'source_id, source_content_hash, review_status, payload', { published_exercise_id: exerciseId });
@@ -143,12 +145,9 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
   const max = object(object(meta.level_contract).audio_policy).max_listens;
   let recommendation: Context['recommendation'] = null;
   if (mode !== 'evaluation' && (mode !== 'devoir' || submitted)) {
-    const routingFilters: Record<string, string | null> = { eleve_id: uid, exercice_id: exerciseId, session_id: sessionId };
-    const route = (await user.read('routing_decisions', 'reason_student, devoir_genere', routingFilters, true))[0];
-    if (route && UUID.test(string(route.devoir_genere))) {
-      const next = await one(user, 'devoirs', 'id', { id: string(route.devoir_genere), eleve_id: uid });
-      if (next) recommendation = { text: string(route.reason_student), route: `/eleve/devoirs/${string(next.id)}` };
-    }
+    recommendation = await resolveAssignedHomeworkRecommendation({
+      user, content, uid, currentDevoirId: devoirId,
+    });
   }
   const sealedChoices = (Array.isArray(validatedItem.choices) ? validatedItem.choices : []).map((choice) => {
     const c = object(choice);
@@ -159,6 +158,7 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
     : [];
   return {
     owner: uid, exerciseId, devoirId, sessionId, mode,
+    attemptId, sousCompetence: string(exercise.sous_competence) || null,
     instruction: string(validatedItem.instruction) || string(validatedExercise.instruction), itemType: string(validatedItem.type) || string(exercise.format),
     competence: string(exercise.competence), level: string(exercise.niveau_vise),
     itemId: string(validatedItem.id), factsHash, sourceId, factRefs, sealedChoices,
@@ -168,4 +168,43 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
     justification: correctionReleased ? string(validatedItem.justification) || null : null,
     maxListens: Number.isInteger(max) && Number(max) > 0 ? Number(max) : null, recommendation,
   };
+}
+
+/** Relie une reco à un devoir déjà attribué. `devoir_genere` n'est jamais un id. */
+async function resolveAssignedHomeworkRecommendation(params: {
+  user: DataStore;
+  content: DataStore;
+  uid: string;
+  currentDevoirId: string | null;
+}): Promise<Context['recommendation']> {
+  const { user, content, uid, currentDevoirId } = params;
+  const routes = await user.read(
+    'routing_decisions',
+    'reason_student, context_snapshot, eleve_id, created_at',
+    { eleve_id: uid },
+  );
+  const devoirs: Row[] = [];
+  const exercises: Row[] = [];
+  for (const route of routes) {
+    const assignedId = snapshotDevoirId(route.context_snapshot);
+    if (!assignedId || assignedId === currentDevoirId) continue;
+    const devoir = await one(user, 'devoirs', 'id, eleve_id, exercice_id, statut', {
+      id: assignedId,
+      eleve_id: uid,
+    });
+    if (!devoir) continue;
+    devoirs.push(devoir);
+    const exerciseId = string(devoir.exercice_id);
+    if (!UUID.test(exerciseId)) continue;
+    const exercise = await one(content, 'exercices', 'id', { id: exerciseId });
+    if (exercise) exercises.push(exercise);
+  }
+  const picked = pickLinkedHomeworkRecommendation({
+    uid,
+    currentDevoirId,
+    routes,
+    devoirs,
+    exercises,
+  });
+  return picked ? { text: picked.text, route: picked.route } : null;
 }

@@ -73,6 +73,7 @@ const pilotageNav = [
   { title: "Suivi des élèves", url: "/formateur/monitoring", icon: TrendingUp },
   { title: "Préparation séjour / naturalisation", url: "/formateur/preparation-examen", icon: GraduationCap },
   { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: ListChecks },
+  { title: "Suivi des aides", url: "/formateur/suivi-aides", icon: Flag },
 ];
 
 const analysesNav = [

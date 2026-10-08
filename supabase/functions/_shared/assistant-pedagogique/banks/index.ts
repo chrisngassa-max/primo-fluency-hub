@@ -23,3 +23,9 @@ export {
   resolveHintBank,
   type HintBankRegistration,
 } from './registry.ts';
+export {
+  hasUsableValidatedHint,
+  inventoryUsableValidatedHints,
+  pedagogicalItemId,
+  type UsableValidatedHintSummary,
+} from './usable-validated-hints.ts';

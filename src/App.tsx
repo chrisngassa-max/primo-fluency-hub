@@ -62,6 +62,7 @@ import SessionDocumentsPage from "@/pages/formateur/SessionDocumentsPage";
 import RapportsPage from "@/pages/formateur/RapportsPage";
 import SessionSupermarket from "@/pages/formateur/SessionSupermarket";
 import SuiviDevoirsPage from "@/pages/formateur/SuiviDevoirsPage";
+import SuiviAidesPage from "@/pages/formateur/SuiviAidesPage";
 import SignalementsPage from "@/pages/formateur/SignalementsPage";
 import DevoirsFormateur from "@/pages/formateur/DevoirsFormateur";
 import AccessRequests from "@/pages/formateur/AccessRequests";
@@ -185,6 +186,7 @@ const App = () => (
               <Route path="production-parcours" element={<ProductionParcours />} />
               <Route path="rapports" element={<RapportsPage />} />
               <Route path="suivi-devoirs" element={<SuiviDevoirsPage />} />
+              <Route path="suivi-aides" element={<SuiviAidesPage />} />
               <Route path="signalements" element={<SignalementsPage />} />
               <Route path="devoirs" element={<DevoirsFormateur />} />
               <Route path="session-builder" element={<SessionSupermarket />} />

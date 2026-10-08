@@ -73,4 +73,26 @@ describe('Lot 2A : panneau branché sur les décisions serveur', () => {
     await ask('Donne-moi un indice');
     expect(container.textContent).toContain('évaluation');
   });
+  it('Lot 4 : propose Indice seulement pour un exercice banque validée', async () => {
+    await open('Lis la question.');
+    const labels = Array.from(container.querySelectorAll('button')).map((b) => b.textContent);
+    expect(labels).toContain('Indice');
+  });
+  it('Lot 4 : n’affiche pas Indice sans aide validée pour l’exercice', async () => {
+    context.pedagogical = {
+      exerciseId: 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0101',
+      sessionId: '20000000-0000-4000-8000-000000000001',
+      itemIndex: 0,
+    };
+    await open('Pas de banque.');
+    const labels = Array.from(container.querySelectorAll('button')).map((b) => b.textContent);
+    expect(labels).not.toContain('Indice');
+    expect(labels).toContain('Expliquer');
+    // restore Louise context for later isolation
+    context.pedagogical = {
+      exerciseId: '62b06150-7942-4c41-bab9-fdba0a4d852c',
+      sessionId: '20000000-0000-4000-8000-000000000001',
+      itemIndex: 0,
+    };
+  });
 });

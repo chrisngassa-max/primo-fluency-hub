@@ -1,6 +1,7 @@
 import { ASSISTANT_TOOLS, type AssistantTool } from '../assistant-accueil/contract-v1.ts';
 import { deliverValidatedHint } from './banks/deliver-hint.ts';
 import { loadContext, type Context, type Dependencies } from './load.ts';
+import { isDuplicatePresentedHint, PRESENTED_HINT_KIND, recordPresentedHint, type HelpLiveEvent } from './help-trace.ts';
 import { object, string, type Row } from './store.ts';
 export type { DataStore } from './store.ts';
 
@@ -92,9 +93,58 @@ export async function handlePedagogical(deps: Dependencies & { body: unknown }):
             justification: context.sealedJustification,
           },
         }, level);
-        result = delivered.allowed
-          ? reply(delivered.text, false, { name: action, allowed: true })
-          : refuse(delivered.text);
+        if (!delivered.allowed) {
+          result = refuse(delivered.text);
+          break;
+        }
+        const recorded = recordPresentedHint({
+          authUserId: context.owner,
+          eleveId: context.owner,
+          exerciseId: context.exerciseId,
+          attemptId: context.attemptId,
+          itemId: context.itemId,
+          sessionId: context.sessionId,
+          sousCompetence: context.sousCompetence,
+          mode: context.mode,
+          niveau: context.level,
+          niveauAide: level,
+          origine: 'banque',
+          contenuVersion: context.factsHash,
+          presentedAt: new Date().toISOString(),
+        });
+        if (!recorded.ok) {
+          result = refuse(
+            recorded.reason === 'session_requise'
+              ? 'Indice indisponible : aucune session valide. Rouvre l’activité depuis ta séance ou ton devoir.'
+              : recorded.reason === 'evaluation'
+              ? 'Les indices sont interdits pendant une évaluation.'
+              : 'L’indice ne peut pas être servi sans journalisation.',
+          );
+          break;
+        }
+        const priorRows = context.sessionId
+          ? await deps.userStore.read('session_live_events', 'event_type, session_id, eleve_id, payload', {
+            session_id: context.sessionId,
+            eleve_id: context.owner,
+          })
+          : [];
+        const priorEvents = priorRows
+          .filter((row) => row.event_type === 'aide_demandee' && object(row.payload).kind === PRESENTED_HINT_KIND)
+          .map((row) => ({
+            event_type: 'aide_demandee' as const,
+            session_id: string(row.session_id),
+            eleve_id: string(row.eleve_id),
+            payload: object(row.payload),
+          })) as HelpLiveEvent[];
+        if (!isDuplicatePresentedHint(priorEvents, recorded.event)) {
+          try {
+            await deps.userStore.insert('session_live_events', recorded.event);
+          } catch {
+            result = refuse('L’indice ne peut pas être servi sans journalisation.');
+            break;
+          }
+        }
+        result = reply(delivered.text, false, { name: action, allowed: true });
         break;
       }
       case 'replay_audio_segment':
