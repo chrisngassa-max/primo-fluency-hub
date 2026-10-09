@@ -17,12 +17,24 @@ export type ExerciseOwnership = {
 
 export function canFormateurReadLiveEvent(input: {
   formateurId: string;
-  event: { session_id: string; eleve_id: string };
+  event: { session_id: string | null; eleve_id: string };
   sessionsOwned: SessionOwnership[];
 }): boolean {
-  if (!input.formateurId) return false;
+  if (!input.formateurId || !input.event.session_id) return false;
   return input.sessionsOwned.some(
     (s) => s.sessionId === input.event.session_id && s.formateurId === input.formateurId,
+  );
+}
+
+/** Lecture formateur des indices journalisés sur un devoir (y compris sans session). */
+export function canFormateurReadDevoirHelpEvent(input: {
+  formateurId: string;
+  event: { devoir_id: string | null; eleve_id: string };
+  devoirsOwned: Array<{ devoirId: string; formateurId: string }>;
+}): boolean {
+  if (!input.formateurId || !input.event.devoir_id) return false;
+  return input.devoirsOwned.some(
+    (d) => d.devoirId === input.event.devoir_id && d.formateurId === input.formateurId,
   );
 }
 
@@ -37,7 +49,7 @@ export function canFormateurReadAttempt(input: {
   );
 }
 
-export function filterHelpEventsForFormateur<T extends { session_id: string; eleve_id: string }>(
+export function filterHelpEventsForFormateur<T extends { session_id: string | null; eleve_id: string }>(
   events: T[],
   formateurId: string,
   sessionsOwned: SessionOwnership[],

@@ -122,7 +122,13 @@ export async function answerContextualQuestion(
   }
 
   if (context.pedagogical) {
-    return answerPedagogicalQuestion(trimmed, context.pedagogical, niveau, options.helpCategory);
+    return answerPedagogicalQuestion(
+      trimmed,
+      context.pedagogical,
+      niveau,
+      options.helpCategory,
+      options.intent,
+    );
   }
 
   // Lot 2A.4 — orientation par page (déterministe, sans invention).

@@ -42,12 +42,42 @@ describe("Lot 3 — traçabilité des aides et verrou évaluation", () => {
     expect(recorded.event.payload.kind).toBe(PRESENTED_HINT_KIND);
     expect(recorded.event.payload.exercice_id).toBe(EXERCISE);
     expect(recorded.event.payload.tentative_id).toBe(ATTEMPT);
+    expect(recorded.event.payload.devoir_id).toBeNull();
     expect(recorded.event.payload.sous_competence).toBe("reperer_info_explicite");
     expect(recorded.event.payload.niveau_aide).toBe(1);
     expect(recorded.event.payload.origine).toBe("banque");
     expect(recorded.event.payload.mode).toBe("entrainement");
     expect(recorded.event.payload.contenu_version).toBe(baseInput.contenuVersion);
     expect(recorded.event.payload.presented_at).toBe(baseInput.presentedAt);
+  });
+
+  it("lie l’indice présenté au devoir attribué quand devoirId est fourni", () => {
+    const devoirId = "30000000-0000-4000-8000-000000000001";
+    const recorded = recordPresentedHint({ ...baseInput, devoirId });
+    expect(recorded.ok).toBe(true);
+    if (!recorded.ok) return;
+    expect(recorded.storage).toBe("session_live_events");
+    expect(recorded.event.payload.devoir_id).toBe(devoirId);
+    expect(recorded.event.payload.exercice_id).toBe(EXERCISE);
+    expect(recorded.event.eleve_id).toBe(LEARNER);
+  });
+
+  it("devoir sans session : ancre presented_help_events, jamais session_requise", () => {
+    const devoirId = "30000000-0000-4000-8000-000000000001";
+    const recorded = recordPresentedHint({ ...baseInput, sessionId: null, devoirId });
+    expect(recorded.ok).toBe(true);
+    if (!recorded.ok) return;
+    expect(recorded.storage).toBe("presented_help_events");
+    expect(recorded.event.session_id).toBeNull();
+    expect(recorded.row?.devoir_id).toBe(devoirId);
+    expect(recorded.row?.session_id).toBeNull();
+  });
+
+  it("sans séance ni devoir : refus trace_anchor_requise", () => {
+    const recorded = recordPresentedHint({ ...baseInput, sessionId: null, devoirId: null });
+    expect(recorded.ok).toBe(false);
+    if (recorded.ok) return;
+    expect(recorded.reason).toBe("trace_anchor_requise");
   });
 
   it("ne crée pas d’événement niveau 0", () => {

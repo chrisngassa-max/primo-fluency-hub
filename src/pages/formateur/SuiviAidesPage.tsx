@@ -20,7 +20,16 @@ import {
   presentDevoirStatus,
   type AttemptOverviewRow,
 } from "@/lib/formateur/trainerHelpOverview";
-import { PRESENTED_HINT_KIND, type HelpLiveEvent } from "../../../supabase/functions/_shared/assistant-pedagogique/help-trace";
+import {
+  PRESENTED_HINT_KIND,
+  presentedHelpRowToEvent,
+  type HelpLiveEvent,
+} from "../../../supabase/functions/_shared/assistant-pedagogique/help-trace";
+
+type PresentedHelpView = HelpLiveEvent & {
+  created_at?: string;
+  source: "seance" | "devoir";
+};
 
 function autonomyBadge(status: AttemptOverviewRow["autonomy"]) {
   if (status === "autonome") return <Badge className="bg-emerald-600">Autonome</Badge>;
@@ -51,6 +60,10 @@ export default function SuiviAidesPage() {
     () => [...new Set(devoirs.map((d) => d.session_id).filter(Boolean))] as string[],
     [devoirs],
   );
+  const devoirIds = useMemo(
+    () => [...new Set(devoirs.map((d) => d.id).filter(Boolean))] as string[],
+    [devoirs],
+  );
   const exerciseIds = useMemo(
     () => [...new Set(devoirs.map((d) => d.exercice_id).filter(Boolean))] as string[],
     [devoirs],
@@ -61,26 +74,87 @@ export default function SuiviAidesPage() {
   );
 
   const { data: helpEvents = [] } = useQuery({
-    queryKey: ["lot5-help-events", sessionIds],
-    enabled: sessionIds.length > 0,
+    queryKey: ["lot5-help-events", sessionIds, devoirIds],
+    enabled: sessionIds.length > 0 || devoirIds.length > 0,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("session_live_events")
-        .select("session_id, eleve_id, event_type, payload, created_at")
-        .in("session_id", sessionIds)
-        .eq("event_type", "aide_demandee")
-        .order("created_at", { ascending: false })
-        .limit(200);
-      if (error) throw error;
-      return (data ?? [])
-        .filter((row) => (row.payload as { kind?: string } | null)?.kind === PRESENTED_HINT_KIND)
-        .map((row) => ({
-          event_type: "aide_demandee" as const,
-          session_id: row.session_id,
-          eleve_id: row.eleve_id as string,
-          payload: row.payload as HelpLiveEvent["payload"],
-          created_at: row.created_at,
-        }));
+      const presented: PresentedHelpView[] = [];
+
+      if (sessionIds.length > 0) {
+        const { data, error } = await supabase
+          .from("session_live_events")
+          .select("session_id, eleve_id, event_type, payload, created_at")
+          .in("session_id", sessionIds)
+          .eq("event_type", "aide_demandee")
+          .order("created_at", { ascending: false })
+          .limit(200);
+        if (error) throw error;
+        for (const row of data ?? []) {
+          if ((row.payload as { kind?: string } | null)?.kind !== PRESENTED_HINT_KIND) continue;
+          presented.push({
+            event_type: "aide_demandee",
+            session_id: row.session_id,
+            eleve_id: row.eleve_id as string,
+            payload: row.payload as HelpLiveEvent["payload"],
+            created_at: row.created_at,
+            source: "seance",
+          });
+        }
+      }
+
+      if (devoirIds.length > 0) {
+        // Table locale migration presented_help_events — absente tant que non appliquée.
+        const { data, error } = await (supabase as unknown as {
+          from: (table: string) => {
+            select: (columns: string) => {
+              in: (column: string, values: string[]) => {
+                eq: (column: string, value: string) => {
+                  order: (column: string, opts: { ascending: boolean }) => {
+                    limit: (n: number) => PromiseLike<{ data: Record<string, unknown>[] | null; error: { code?: string; message?: string } | null }>;
+                  };
+                };
+              };
+            };
+          };
+        }).from("presented_help_events")
+          .select("eleve_id,devoir_id,exercice_id,item_id,tentative_id,session_id,mode,niveau,niveau_aide,origine,contenu_version,sous_competence,presented_at,created_at")
+          .in("devoir_id", devoirIds)
+          .eq("kind", PRESENTED_HINT_KIND)
+          .order("created_at", { ascending: false })
+          .limit(200);
+        if (error) {
+          // 42P01 = undefined_table — migration locale pas encore appliquée.
+          if (error.code !== "42P01" && !/presented_help_events|does not exist|schema cache/i.test(error.message ?? "")) {
+            throw error;
+          }
+        } else {
+          for (const row of data ?? []) {
+            const event = presentedHelpRowToEvent({
+              eleve_id: String(row.eleve_id),
+              devoir_id: String(row.devoir_id),
+              exercice_id: String(row.exercice_id),
+              item_id: String(row.item_id),
+              tentative_id: row.tentative_id ? String(row.tentative_id) : null,
+              session_id: row.session_id ? String(row.session_id) : null,
+              mode: String(row.mode),
+              niveau: String(row.niveau),
+              niveau_aide: Number(row.niveau_aide),
+              origine: String(row.origine),
+              contenu_version: String(row.contenu_version),
+              sous_competence: row.sous_competence ? String(row.sous_competence) : null,
+              presented_at: String(row.presented_at),
+            });
+            presented.push({
+              ...event,
+              created_at: row.created_at ? String(row.created_at) : undefined,
+              source: "devoir",
+            });
+          }
+        }
+      }
+
+      return presented.sort((a, b) =>
+        String(b.created_at ?? b.payload.presented_at).localeCompare(String(a.created_at ?? a.payload.presented_at)),
+      );
     },
   });
 
@@ -280,21 +354,49 @@ export default function SuiviAidesPage() {
         </TabsContent>
 
         <TabsContent value="aides" className="space-y-2">
+          <p className="text-xs text-muted-foreground">
+            Uniquement les indices réellement présentés (banque). Les demandes d’aide Atelier et les traces
+            non mesurables n’apparaissent pas ici.
+          </p>
           {helpEvents.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Aucun indice présenté journalisé (banque) sur ces séances.</p>
+            <p className="text-sm text-muted-foreground">
+              Aucun indice présenté journalisé pour ces devoirs (séance ou devoir sans séance).
+            </p>
           ) : (
-            helpEvents.map((e, idx) => (
-              <Card key={`${e.session_id}-${idx}`}>
-                <CardContent className="py-3 text-sm flex flex-wrap gap-2 items-center">
-                  <Badge>niv. {e.payload.niveau_aide}</Badge>
-                  <span>{e.payload.origine}</span>
-                  <span className="text-muted-foreground">{e.payload.item_id}</span>
-                  {e.payload.sous_competence ? (
-                    <span className="text-muted-foreground">{e.payload.sous_competence}</span>
-                  ) : null}
-                </CardContent>
-              </Card>
-            ))
+            helpEvents.map((e, idx) => {
+              const linked = devoirs.find((d) =>
+                (e.payload.devoir_id ? d.id === e.payload.devoir_id : true)
+                && d.eleve_id === e.eleve_id
+                && d.exercice_id === e.payload.exercice_id
+                && (e.source === "devoir" || !d.session_id || d.session_id === e.session_id),
+              );
+              const eleve = linked?.eleve as { prenom?: string; nom?: string } | null | undefined;
+              const exo = linked?.exercice as { titre?: string } | null | undefined;
+              const eleveLabel = eleve
+                ? `${eleve.prenom ?? ""} ${eleve.nom ?? ""}`.trim()
+                : e.eleve_id.slice(0, 8);
+              return (
+                <Card key={`${e.source}-${e.session_id ?? e.payload.devoir_id}-${e.payload.item_id}-${idx}`}>
+                  <CardContent className="py-3 text-sm flex flex-wrap gap-2 items-center">
+                    <Badge>Présenté</Badge>
+                    <Badge variant="outline">{e.source === "devoir" ? "Devoir" : "Séance"}</Badge>
+                    <Badge variant="secondary">niv. {e.payload.niveau_aide}</Badge>
+                    <span className="font-medium">{eleveLabel}</span>
+                    <span>{exo?.titre ?? e.payload.exercice_id.slice(0, 8)}</span>
+                    <span className="text-muted-foreground">item {e.payload.item_id}</span>
+                    {e.payload.devoir_id ? (
+                      <span className="text-muted-foreground font-mono text-xs">
+                        devoir {e.payload.devoir_id.slice(0, 8)}…
+                      </span>
+                    ) : null}
+                    <span className="text-muted-foreground">{e.payload.origine}</span>
+                    {e.payload.sous_competence ? (
+                      <span className="text-muted-foreground">{e.payload.sous_competence}</span>
+                    ) : null}
+                  </CardContent>
+                </Card>
+              );
+            })
           )}
         </TabsContent>
 

@@ -105,14 +105,15 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
     [pageHint, context.pedagogical],
   );
 
+  const hintItemId = context.pedagogical
+    ? pedagogicalItemId(context.pedagogical.itemIndex)
+    : "";
   /** Lot 4 : bouton Indice seulement si une aide banque validée existe pour cet item. */
   const showValidatedHintButton = Boolean(
     context.pedagogical
     && !isEvaluation
-    && hasUsableValidatedHint(
-      context.pedagogical.exerciseId,
-      pedagogicalItemId(context.pedagogical.itemIndex),
-    ),
+    && hintItemId
+    && hasUsableValidatedHint(context.pedagogical.exerciseId, hintItemId),
   );
 
   const decideConsent = (status: "accepted" | "refused") => {
@@ -311,6 +312,11 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
                   </Button>
                 ))}
               </div>
+              {!showValidatedHintButton ? (
+                <p className="text-[11px] text-muted-foreground">
+                  Aucun indice validé pour cette question. Demande à ton formateur.
+                </p>
+              ) : null}
               <div className="flex flex-wrap gap-1">
                 <p className="w-full text-[11px] text-muted-foreground">Aide de l’exercice sans IA — question {context.pedagogical.itemIndex + 1}</p>
                 {(context.pedagogicalItemCount ?? 0) > 1 ? (

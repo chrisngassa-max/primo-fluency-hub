@@ -39,7 +39,23 @@ describe('Lot 2A : panneau branché sur les décisions serveur', () => {
   it('affiche la consigne simplifiée et envoie seulement les sélecteurs', async () => {
     await open('Lis la question puis choisis une réponse.'); await ask('Explique la consigne plus simplement');
     expect(container.textContent).toContain('Lis la question puis choisis une réponse.');
-    expect(invoke).toHaveBeenCalledWith('captcf-assistant-qa', { body: { kind: 'pedagogique', ...context.pedagogical, question: 'Explique la consigne plus simplement' } });
+    expect(invoke).toHaveBeenCalledWith('captcf-assistant-qa', {
+      body: {
+        kind: 'pedagogique',
+        exerciseId: context.pedagogical.exerciseId,
+        itemIndex: context.pedagogical.itemIndex,
+        sessionId: context.pedagogical.sessionId,
+        question: 'Explique la consigne plus simplement',
+      },
+    });
+  });
+
+  it('Indice : envoie l’outil serveur et n’affiche pas FAQ locale si refus pédagogique', async () => {
+    await open('Aucun indice validé n’est disponible pour cet exercice.', true, false);
+    await click('Indice');
+    expect(invoke.mock.calls[0][1].body.tool).toEqual({ name: 'deliver_validated_hint', args: { level: 1 } });
+    expect(container.textContent).toContain('Aucun indice validé');
+    expect(container.textContent).not.toContain('FAQ locale — provider=faq_fallback');
   });
   it('affiche le refus et le fallback sans remplacer par une réponse locale', async () => {
     await open('Contexte non vérifiable.', true, true); await ask('Pourquoi ma réponse est-elle fausse ?');

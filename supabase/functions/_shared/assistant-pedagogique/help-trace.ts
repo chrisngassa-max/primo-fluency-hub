@@ -18,6 +18,8 @@ export type PresentedHintPayload = {
   exercice_id: string;
   item_id: string;
   tentative_id: string | null;
+  /** Présent quand l’indice est servi depuis un devoir attribué. */
+  devoir_id: string | null;
   sous_competence: string | null;
   mode: ActivityMode;
   niveau: string;
@@ -28,11 +30,30 @@ export type PresentedHintPayload = {
   presented_at: string;
 };
 
+/** Événement d’aide présentée — séance live et/ou devoir sans séance. */
 export type HelpLiveEvent = {
   event_type: "aide_demandee";
-  session_id: string;
+  session_id: string | null;
   eleve_id: string;
   payload: PresentedHintPayload;
+};
+
+/** Ligne à écrire dans public.presented_help_events (devoir sans séance live). */
+export type PresentedHelpEventRow = {
+  kind: typeof PRESENTED_HINT_KIND;
+  eleve_id: string;
+  devoir_id: string;
+  exercice_id: string;
+  item_id: string;
+  tentative_id: string | null;
+  session_id: string | null;
+  mode: ActivityMode;
+  niveau: string;
+  niveau_aide: number;
+  origine: HelpOrigin;
+  contenu_version: string;
+  sous_competence: string | null;
+  presented_at: string;
 };
 
 export type RecordPresentedHintInput = {
@@ -42,6 +63,7 @@ export type RecordPresentedHintInput = {
   attemptId: string | null;
   itemId: string;
   sessionId: string | null;
+  devoirId?: string | null;
   sousCompetence: string | null;
   mode: ActivityMode;
   niveau: string;
@@ -52,8 +74,14 @@ export type RecordPresentedHintInput = {
 };
 
 export type RecordPresentedHintResult =
-  | { ok: true; event: HelpLiveEvent }
-  | { ok: false; reason: "evaluation" | "acces_refuse" | "niveau_invalide" | "session_requise" | "identifiants_invalides"; event?: undefined };
+  | { ok: true; event: HelpLiveEvent; storage: "session_live_events" | "presented_help_events"; row?: PresentedHelpEventRow }
+  | {
+    ok: false;
+    reason: "evaluation" | "acces_refuse" | "niveau_invalide" | "trace_anchor_requise" | "identifiants_invalides";
+    event?: undefined;
+    storage?: undefined;
+    row?: undefined;
+  };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -71,33 +99,97 @@ export function recordPresentedHint(input: RecordPresentedHintInput): RecordPres
   if (!Number.isInteger(input.niveauAide) || input.niveauAide < 1) {
     return { ok: false, reason: "niveau_invalide" };
   }
-  if (!isUuid(input.sessionId)) {
-    return { ok: false, reason: "session_requise" };
-  }
   if (!isUuid(input.exerciseId) || !input.itemId.trim()) {
     return { ok: false, reason: "identifiants_invalides" };
   }
   const tentativeId = isUuid(input.attemptId) ? input.attemptId : null;
+  const devoirId = isUuid(input.devoirId) ? input.devoirId : null;
+  const sessionId = isUuid(input.sessionId) ? input.sessionId : null;
+  // Ancre de journalisation : séance live OU devoir attribué (sans forcer un rattachement séance).
+  if (!sessionId && !devoirId) {
+    return { ok: false, reason: "trace_anchor_requise" };
+  }
+  const payload: PresentedHintPayload = {
+    kind: PRESENTED_HINT_KIND,
+    exercice_id: input.exerciseId,
+    item_id: input.itemId.trim(),
+    tentative_id: tentativeId,
+    devoir_id: devoirId,
+    sous_competence: input.sousCompetence?.trim() || null,
+    mode: input.mode,
+    niveau: input.niveau,
+    aide_type: "indice",
+    origine: input.origine,
+    contenu_version: input.contenuVersion,
+    niveau_aide: input.niveauAide,
+    presented_at: input.presentedAt,
+  };
+  const event: HelpLiveEvent = {
+    event_type: "aide_demandee",
+    session_id: sessionId,
+    eleve_id: input.eleveId,
+    payload,
+  };
+  if (sessionId) {
+    return { ok: true, event, storage: "session_live_events" };
+  }
+  // devoirId garanti par le garde ci-dessus
   return {
     ok: true,
-    event: {
-      event_type: "aide_demandee",
-      session_id: input.sessionId,
+    event,
+    storage: "presented_help_events",
+    row: {
+      kind: PRESENTED_HINT_KIND,
       eleve_id: input.eleveId,
-      payload: {
-        kind: PRESENTED_HINT_KIND,
-        exercice_id: input.exerciseId,
-        item_id: input.itemId.trim(),
-        tentative_id: tentativeId,
-        sous_competence: input.sousCompetence?.trim() || null,
-        mode: input.mode,
-        niveau: input.niveau,
-        aide_type: "indice",
-        origine: input.origine,
-        contenu_version: input.contenuVersion,
-        niveau_aide: input.niveauAide,
-        presented_at: input.presentedAt,
-      },
+      devoir_id: devoirId!,
+      exercice_id: input.exerciseId,
+      item_id: payload.item_id,
+      tentative_id: tentativeId,
+      session_id: null,
+      mode: input.mode,
+      niveau: input.niveau,
+      niveau_aide: input.niveauAide,
+      origine: input.origine,
+      contenu_version: input.contenuVersion,
+      sous_competence: payload.sous_competence,
+      presented_at: input.presentedAt,
+    },
+  };
+}
+
+export function presentedHelpRowToEvent(row: {
+  eleve_id: string;
+  session_id?: string | null;
+  devoir_id: string;
+  exercice_id: string;
+  item_id: string;
+  tentative_id?: string | null;
+  mode: string;
+  niveau: string;
+  niveau_aide: number;
+  origine: string;
+  contenu_version: string;
+  sous_competence?: string | null;
+  presented_at: string;
+}): HelpLiveEvent {
+  return {
+    event_type: "aide_demandee",
+    session_id: isUuid(row.session_id) ? row.session_id : null,
+    eleve_id: row.eleve_id,
+    payload: {
+      kind: PRESENTED_HINT_KIND,
+      exercice_id: row.exercice_id,
+      item_id: row.item_id,
+      tentative_id: isUuid(row.tentative_id) ? row.tentative_id : null,
+      devoir_id: row.devoir_id,
+      sous_competence: row.sous_competence?.trim() || null,
+      mode: row.mode as ActivityMode,
+      niveau: row.niveau,
+      aide_type: "indice",
+      origine: row.origine as HelpOrigin,
+      contenu_version: row.contenu_version,
+      niveau_aide: row.niveau_aide,
+      presented_at: row.presented_at,
     },
   };
 }
@@ -148,7 +240,7 @@ export function resolveTrustedHintTrace(input: {
   return buildHintTrace(presented, origin);
 }
 
-/** Même présentation = même élève/session/exercice/item/niveau/tentative (hors presented_at). */
+/** Même présentation = même élève/ancre/exercice/item/niveau/tentative (hors presented_at). */
 export function isDuplicatePresentedHint(
   existing: HelpLiveEvent[],
   candidate: HelpLiveEvent,
@@ -159,7 +251,8 @@ export function isDuplicatePresentedHint(
   return existing.some((event) =>
     event.event_type === "aide_demandee"
     && event.eleve_id === candidate.eleve_id
-    && event.session_id === candidate.session_id
+    && (event.session_id ?? null) === (candidate.session_id ?? null)
+    && (event.payload.devoir_id ?? null) === (candidate.payload.devoir_id ?? null)
     && event.payload.kind === PRESENTED_HINT_KIND
     && event.payload.exercice_id === candidate.payload.exercice_id
     && event.payload.item_id === candidate.payload.item_id

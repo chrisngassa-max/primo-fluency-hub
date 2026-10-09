@@ -1,7 +1,13 @@
 import { ASSISTANT_TOOLS, type AssistantTool } from '../assistant-accueil/contract-v1.ts';
 import { deliverValidatedHint } from './banks/deliver-hint.ts';
 import { loadContext, type Context, type Dependencies } from './load.ts';
-import { isDuplicatePresentedHint, PRESENTED_HINT_KIND, recordPresentedHint, type HelpLiveEvent } from './help-trace.ts';
+import {
+  isDuplicatePresentedHint,
+  PRESENTED_HINT_KIND,
+  presentedHelpRowToEvent,
+  recordPresentedHint,
+  type HelpLiveEvent,
+} from './help-trace.ts';
 import { object, string, type Row } from './store.ts';
 export type { DataStore } from './store.ts';
 
@@ -58,9 +64,10 @@ function instruction(context: Context): string {
 // Aucun import de client IA et aucune dépendance modèle dans ce chemin.
 export async function handlePedagogical(deps: Dependencies & { body: unknown }): Promise<PedagogicalResponse> {
   const body = object(deps.body);
+  const requestedAction = intent(body);
   try {
     const context = await loadContext(deps, body);
-    const action = intent(body);
+    const action = requestedAction;
     const toolName = ASSISTANT_TOOLS.includes(action as AssistantTool) ? action as AssistantTool : null;
     const refuse = (text: string) => reply(text, true, toolName ? { name: toolName, allowed: false } : null);
     let result: PedagogicalResponse;
@@ -94,7 +101,12 @@ export async function handlePedagogical(deps: Dependencies & { body: unknown }):
           },
         }, level);
         if (!delivered.allowed) {
-          result = refuse(delivered.text);
+          // Refus pédagogique explicite — jamais FAQ générique « contexte ».
+          result = reply(
+            delivered.text || 'Aucun indice validé n’est disponible. Demande à ton formateur.',
+            true,
+            toolName ? { name: toolName, allowed: false } : null,
+          );
           break;
         }
         const recorded = recordPresentedHint({
@@ -104,6 +116,7 @@ export async function handlePedagogical(deps: Dependencies & { body: unknown }):
           attemptId: context.attemptId,
           itemId: context.itemId,
           sessionId: context.sessionId,
+          devoirId: context.devoirId,
           sousCompetence: context.sousCompetence,
           mode: context.mode,
           niveau: context.level,
@@ -113,34 +126,74 @@ export async function handlePedagogical(deps: Dependencies & { body: unknown }):
           presentedAt: new Date().toISOString(),
         });
         if (!recorded.ok) {
-          result = refuse(
-            recorded.reason === 'session_requise'
-              ? 'Indice indisponible : aucune session valide. Rouvre l’activité depuis ta séance ou ton devoir.'
-              : recorded.reason === 'evaluation'
+          result = reply(
+            recorded.reason === 'evaluation'
               ? 'Les indices sont interdits pendant une évaluation.'
-              : 'L’indice ne peut pas être servi sans journalisation.',
+              : recorded.reason === 'trace_anchor_requise'
+              ? 'L’indice ne peut pas être enregistré pour cette activité. Demande à ton formateur.'
+              : 'L’indice ne peut pas être servi sans journalisation fiable. Demande à ton formateur.',
+            true,
+            toolName ? { name: toolName, allowed: false } : null,
           );
           break;
         }
-        const priorRows = context.sessionId
-          ? await deps.userStore.read('session_live_events', 'event_type, session_id, eleve_id, payload', {
-            session_id: context.sessionId,
-            eleve_id: context.owner,
-          })
-          : [];
-        const priorEvents = priorRows
-          .filter((row) => row.event_type === 'aide_demandee' && object(row.payload).kind === PRESENTED_HINT_KIND)
-          .map((row) => ({
-            event_type: 'aide_demandee' as const,
-            session_id: string(row.session_id),
+        let priorEvents: HelpLiveEvent[] = [];
+        if (recorded.storage === 'session_live_events' && context.sessionId) {
+          const priorRows = await deps.userStore.read(
+            'session_live_events',
+            'event_type, session_id, eleve_id, payload',
+            { session_id: context.sessionId, eleve_id: context.owner },
+          );
+          priorEvents = priorRows
+            .filter((row) => row.event_type === 'aide_demandee' && object(row.payload).kind === PRESENTED_HINT_KIND)
+            .map((row) => ({
+              event_type: 'aide_demandee' as const,
+              session_id: string(row.session_id) || null,
+              eleve_id: string(row.eleve_id),
+              payload: object(row.payload),
+            })) as HelpLiveEvent[];
+        } else if (recorded.storage === 'presented_help_events' && context.devoirId) {
+          const priorRows = await deps.userStore.read(
+            'presented_help_events',
+            'eleve_id, devoir_id, exercice_id, item_id, tentative_id, session_id, mode, niveau, niveau_aide, origine, contenu_version, sous_competence, presented_at',
+            { devoir_id: context.devoirId, eleve_id: context.owner },
+          );
+          priorEvents = priorRows.map((row) => presentedHelpRowToEvent({
             eleve_id: string(row.eleve_id),
-            payload: object(row.payload),
-          })) as HelpLiveEvent[];
+            devoir_id: string(row.devoir_id),
+            exercice_id: string(row.exercice_id),
+            item_id: string(row.item_id),
+            tentative_id: string(row.tentative_id) || null,
+            session_id: string(row.session_id) || null,
+            mode: string(row.mode),
+            niveau: string(row.niveau),
+            niveau_aide: Number(row.niveau_aide),
+            origine: string(row.origine),
+            contenu_version: string(row.contenu_version),
+            sous_competence: string(row.sous_competence) || null,
+            presented_at: string(row.presented_at),
+          }));
+        }
         if (!isDuplicatePresentedHint(priorEvents, recorded.event)) {
           try {
-            await deps.userStore.insert('session_live_events', recorded.event);
+            if (recorded.storage === 'session_live_events') {
+              await deps.userStore.insert('session_live_events', recorded.event);
+            } else if (recorded.row) {
+              await deps.userStore.insert('presented_help_events', recorded.row);
+            } else {
+              result = reply(
+                'L’indice ne peut pas être servi sans journalisation fiable. Demande à ton formateur.',
+                true,
+                toolName ? { name: toolName, allowed: false } : null,
+              );
+              break;
+            }
           } catch {
-            result = refuse('L’indice ne peut pas être servi sans journalisation.');
+            result = reply(
+              'L’indice ne peut pas être servi sans journalisation fiable. Demande à ton formateur.',
+              true,
+              toolName ? { name: toolName, allowed: false } : null,
+            );
             break;
           }
         }
@@ -184,6 +237,14 @@ export async function handlePedagogical(deps: Dependencies & { body: unknown }):
     return { ...result, externalContext: projectExternal(context) };
   } catch {
     // Ni erreur SQL ni contenu/correction dans le message ou les logs.
+    // Demande d’indice : refus pédagogique explicite, jamais FAQ locale générique.
+    if (requestedAction === 'deliver_validated_hint') {
+      return reply(
+        'Je ne peux pas ouvrir un indice traçable pour cet exercice. Demande à ton formateur de vérifier l’exercice et son rattachement au devoir.',
+        true,
+        { name: 'deliver_validated_hint', allowed: false },
+      );
+    }
     return unavailable();
   }
 }

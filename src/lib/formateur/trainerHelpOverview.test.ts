@@ -25,6 +25,7 @@ const helpEvent = (overrides: Partial<HelpLiveEvent["payload"]> = {}): HelpLiveE
     exercice_id: EXERCISE,
     item_id: "item_01",
     tentative_id: ATTEMPT,
+    devoir_id: null,
     sous_competence: "reperer_info_explicite",
     mode: "entrainement",
     niveau: "A1",

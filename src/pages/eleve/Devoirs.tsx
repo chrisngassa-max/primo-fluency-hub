@@ -7,10 +7,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  BookOpen, CheckCircle2, AlertCircle, ChevronRight, AlertTriangle,
-  XCircle, Calendar, PlayCircle,
+  BookOpen, CheckCircle2, AlertCircle, AlertTriangle,
+  Calendar, PlayCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import ResumeAssignedHomeworkCard from "@/components/eleve/ResumeAssignedHomeworkCard";
 import { buildAssignedHomeworkResume } from "../../../supabase/functions/_shared/assistant-pedagogique/assigned-homework";
@@ -102,20 +103,28 @@ const EleveDevoirs = () => {
   const pendingAll = all.filter((d) => d.statut === "en_attente" || d.statut === "expire");
   const inProgress = pendingAll.filter((d) => (tentativeMap?.[d.id] ?? 0) > 0);
   const todo = pendingAll.filter((d) => (tentativeMap?.[d.id] ?? 0) === 0);
+  const listReady = !isLoading && devoirs !== undefined;
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <div>
         <h1 className="text-[28px] font-extrabold tracking-tight text-[#0b234a]">Devoirs Élève</h1>
-        <p className="text-muted-foreground mt-1">
-          {pendingAll.length === 0 ? "Aucun devoir en attente" : pendingAll.length === 1 ? "1 devoir en attente" : `${pendingAll.length} devoirs en attente`}
+        <p className="text-muted-foreground mt-1" aria-live="polite">
+          {!listReady
+            ? "Chargement de tes devoirs…"
+            : pendingAll.length === 0
+            ? "Aucun devoir en attente"
+            : pendingAll.length === 1
+            ? "1 devoir en attente"
+            : `${pendingAll.length} devoirs en attente`}
         </p>
       </div>
 
-      <ResumeAssignedHomeworkCard resume={resume} />
+      {/* Ne pas afficher « aucun / ambigu » tant que la requête devoirs n’a pas abouti. */}
+      {listReady ? <ResumeAssignedHomeworkCard resume={resume} /> : null}
 
       {/* Stats */}
-      {all.length > 0 && (
+      {listReady && all.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-[0.625rem] bg-orange-500 p-4 text-center shadow-sm">
             <p className="text-3xl font-extrabold text-white">{todo.length}</p>
@@ -132,8 +141,8 @@ const EleveDevoirs = () => {
         </div>
       )}
 
-      {isLoading ? (
-        <div className="space-y-3">
+      {!listReady ? (
+        <div className="space-y-3" role="status" aria-label="Chargement des devoirs">
           <Skeleton className="h-20 w-full" />
           <Skeleton className="h-20 w-full" />
           <Skeleton className="h-20 w-full" />
@@ -144,7 +153,7 @@ const EleveDevoirs = () => {
           {todo.length > 0 && (
             <Section title="À faire" icon={<BookOpen className="h-4 w-4" />}>
               {todo.map((d) => (
-                <DevoirCard key={d.id} devoir={d} onOpen={() => navigate(`/eleve/devoirs/${d.id}`)} />
+                <DevoirCard key={d.id} devoir={d} onResume={() => navigate(`/eleve/devoirs/${d.id}`)} />
               ))}
             </Section>
           )}
@@ -153,7 +162,7 @@ const EleveDevoirs = () => {
           {inProgress.length > 0 && (
             <Section title="En cours" icon={<PlayCircle className="h-4 w-4" />}>
               {inProgress.map((d) => (
-                <DevoirCard key={d.id} devoir={d} onOpen={() => navigate(`/eleve/devoirs/${d.id}`)} inProgress />
+                <DevoirCard key={d.id} devoir={d} onResume={() => navigate(`/eleve/devoirs/${d.id}`)} inProgress />
               ))}
             </Section>
           )}
@@ -162,12 +171,12 @@ const EleveDevoirs = () => {
           {completed.length > 0 && (
             <Section title="Terminés" icon={<CheckCircle2 className="h-4 w-4" />}>
               {completed.slice(0, 10).map((d) => (
-                <DevoirCard key={d.id} devoir={d} onOpen={() => navigate(`/eleve/devoirs/${d.id}`)} />
+                <DevoirCard key={d.id} devoir={d} onResume={() => navigate(`/eleve/devoirs/${d.id}`)} />
               ))}
             </Section>
           )}
 
-          {/* Empty states */}
+          {/* Empty states — uniquement après chargement terminé */}
           {all.length === 0 && (
             <div className="flex flex-col items-center justify-center py-14 text-center">
               <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
@@ -241,7 +250,7 @@ function DeadlineDisplay({ dateEcheance, isDone }: { dateEcheance: string; isDon
   );
 }
 
-function DevoirCard({ devoir, onOpen, inProgress }: { devoir: any; onOpen: () => void; inProgress?: boolean }) {
+function DevoirCard({ devoir, onResume, inProgress }: { devoir: any; onResume: () => void; inProgress?: boolean }) {
   const ex = devoir.exercice as any;
   const isUrgent = devoir.raison === "remediation";
   const isDone = devoir.statut === "fait" || devoir.statut === "arrete";
@@ -249,13 +258,12 @@ function DevoirCard({ devoir, onOpen, inProgress }: { devoir: any; onOpen: () =>
   return (
     <div
       className={cn(
-        "flex items-center gap-3 p-4 rounded-[0.625rem] border cursor-pointer transition-colors shadow-sm",
-        isDone ? "bg-green-50 border-green-200 hover:bg-green-100/70 opacity-80"
-          : inProgress ? "bg-blue-50 border-blue-200 hover:bg-blue-100/70"
-          : isUrgent ? "bg-destructive/5 border-destructive/30 hover:bg-destructive/10"
-          : "bg-orange-50 border-orange-200 hover:bg-orange-100/70",
+        "flex items-center gap-3 p-4 rounded-[0.625rem] border shadow-sm",
+        isDone ? "bg-green-50 border-green-200 opacity-80"
+          : inProgress ? "bg-blue-50 border-blue-200"
+          : isUrgent ? "bg-destructive/5 border-destructive/30"
+          : "bg-orange-50 border-orange-200",
       )}
-      onClick={onOpen}
     >
           <div className={cn(
             "flex items-center justify-center h-10 w-10 rounded-xl shrink-0",
@@ -295,7 +303,15 @@ function DevoirCard({ devoir, onOpen, inProgress }: { devoir: any; onOpen: () =>
             </div>
             <DeadlineDisplay dateEcheance={devoir.date_echeance} isDone={isDone} />
           </div>
-          <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+          <Button
+            type="button"
+            size="sm"
+            className="shrink-0"
+            variant={isDone ? "outline" : "default"}
+            onClick={onResume}
+          >
+            Reprendre
+          </Button>
     </div>
   );
 }

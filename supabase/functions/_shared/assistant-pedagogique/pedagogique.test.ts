@@ -355,6 +355,7 @@ describe('Lot 2A : décisions serveur Louise sans modèle', () => {
     expect(event.eleve_id).toBe(learner);
     expect((event.payload as { kind: string; tentative_id: string; niveau_aide: number; origine: string }).kind).toBe(PRESENTED_HINT_KIND);
     expect((event.payload as { tentative_id: string }).tentative_id).toBe(attempt);
+    expect((event.payload as { devoir_id: string }).devoir_id).toBe(devoir);
     expect((event.payload as { niveau_aide: number }).niveau_aide).toBe(1);
     expect((event.payload as { origine: string }).origine).toBe('banque');
     expect(JSON.stringify(event.payload)).not.toMatch(/answer_correct|score_normalized|bonne_reponse/);
@@ -409,14 +410,81 @@ describe('Lot 2A : décisions serveur Louise sans modèle', () => {
     expect((rows.session_live_events[0].payload as { tentative_id: string }).tentative_id).toBe(attempt);
     expect(rows.session_live_events[0].eleve_id).toBe(learner);
   });
-  it('32 Lot 4 : session absente → refus clair, aucun événement', async () => {
+  it('32 devoir sans session_id → indice journalisé dans presented_help_events', async () => {
     const rows = louiseHintReadyFixture();
     rows.devoirs[0].session_id = null;
+    rows.presented_help_events = [];
     const store: DataStore = {
       async read(table, _columns, filters) {
         return (rows[table] ?? []).filter(row => Object.entries(filters).every(([k, v]) => row[k] === v));
       },
-      insert: vi.fn(async (table, row) => { rows[table].push(row); }),
+      insert: vi.fn(async (table, row) => { rows[table] = rows[table] ?? []; rows[table].push(row); }),
+    };
+    const r = await handlePedagogical({
+      authUserId: learner,
+      body: {
+        exerciseId: rows.exercices[0].id,
+        devoirId: devoir,
+        itemIndex: 0,
+        tool: { name: 'deliver_validated_hint', args: { level: 1 } },
+      },
+      userStore: store,
+      contentStore: store,
+    });
+    expect(r.refused).toBe(false);
+    expect(r.provider).toBe('server_context');
+    expect(r.text).not.toMatch(/vérifier le contexte|FAQ/i);
+    expect(store.insert).toHaveBeenCalledOnce();
+    expect(store.insert).toHaveBeenCalledWith(
+      'presented_help_events',
+      expect.objectContaining({
+        devoir_id: devoir,
+        eleve_id: learner,
+        exercice_id: rows.exercices[0].id,
+        item_id: 'item_01',
+        session_id: null,
+        niveau_aide: 1,
+        origine: 'banque',
+      }),
+    );
+    expect(rows.session_live_events).toHaveLength(0);
+    expect(rows.presented_help_events).toHaveLength(1);
+  });
+
+  it('32d devoir sans session : relance réseau ne double pas l’événement', async () => {
+    const rows = louiseHintReadyFixture();
+    rows.devoirs[0].session_id = null;
+    rows.presented_help_events = [];
+    const store: DataStore = {
+      async read(table, _columns, filters) {
+        return (rows[table] ?? []).filter(row => Object.entries(filters).every(([k, v]) => row[k] === v));
+      },
+      insert: vi.fn(async (table, row) => { rows[table] = rows[table] ?? []; rows[table].push(row); }),
+    };
+    const body = {
+      exerciseId: rows.exercices[0].id,
+      devoirId: devoir,
+      itemIndex: 0,
+      tool: { name: 'deliver_validated_hint', args: { level: 1 } },
+    };
+    const first = await handlePedagogical({ authUserId: learner, body, userStore: store, contentStore: store });
+    const second = await handlePedagogical({ authUserId: learner, body, userStore: store, contentStore: store });
+    expect(first.refused).toBe(false);
+    expect(second.refused).toBe(false);
+    expect(first.text).toBe(second.text);
+    expect(store.insert).toHaveBeenCalledOnce();
+    expect(rows.presented_help_events).toHaveLength(1);
+  });
+
+  it('32c échec d’écriture presented_help_events → aucun indice renvoyé', async () => {
+    const rows = louiseHintReadyFixture();
+    rows.devoirs[0].session_id = null;
+    rows.presented_help_events = [];
+    const store: DataStore = {
+      async read(table, _columns, filters) {
+        return (rows[table] ?? []).filter(row => Object.entries(filters).every(([k, v]) => row[k] === v));
+      },
+      insert: vi.fn(async () => { throw new Error('help_write_failed'); }),
     };
     const r = await handlePedagogical({
       authUserId: learner,
@@ -430,9 +498,39 @@ describe('Lot 2A : décisions serveur Louise sans modèle', () => {
       contentStore: store,
     });
     expect(r.refused).toBe(true);
-    expect(r.text).toMatch(/session/i);
-    expect(store.insert).not.toHaveBeenCalled();
+    expect(r.provider).not.toBe('faq_fallback');
+    expect(r.text).toMatch(/journalisation/i);
     expect(r.text).not.toMatch(/thème|musique|Écoute/i);
+    expect(rows.presented_help_events).toHaveLength(0);
+  });
+
+  it('32b devoir attribué : séance hors groupe n’empêche plus l’indice ni la trace', async () => {
+    const rows = louiseHintReadyFixture();
+    rows.group_members = []; // élève plus dans le groupe de la séance liée
+    const store: DataStore = {
+      async read(table, _columns, filters) {
+        return (rows[table] ?? []).filter(row => Object.entries(filters).every(([k, v]) => row[k] === v));
+      },
+      insert: vi.fn(async (table, row) => { rows[table].push(row); }),
+    };
+    const r = await handlePedagogical({
+      authUserId: learner,
+      body: {
+        exerciseId: rows.exercices[0].id,
+        devoirId: devoir,
+        sessionId: session, // les deux sélecteurs ne doivent plus invalider le contexte
+        itemIndex: 0,
+        tool: { name: 'deliver_validated_hint', args: { level: 1 } },
+        question: 'Donne-moi un indice',
+      },
+      userStore: store,
+      contentStore: store,
+    });
+    expect(r.refused).toBe(false);
+    expect(r.provider).toBe('server_context');
+    expect(r.text).not.toMatch(/vérifier le contexte/i);
+    expect(store.insert).toHaveBeenCalledOnce();
+    expect((rows.session_live_events[0].payload as { devoir_id: string }).devoir_id).toBe(devoir);
   });
   it('33 Lot 4 : nouvel niveau d’aide reste traçable (pas un doublon)', async () => {
     const rows = louiseHintReadyFixture();

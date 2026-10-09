@@ -27,8 +27,11 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
   let sessionId = string(input.sessionId) || null;
   const attemptId = string(input.attemptId) || null;
   // Plus de liste blanche Louise : tout exercice UUID rattaché et publié peut être chargé.
-  if (!UUID.test(uid) || !UUID.test(exerciseId) || (!!devoirId === !!sessionId) ||
-      (devoirId && !UUID.test(devoirId)) || (sessionId && !UUID.test(sessionId)) || (attemptId && !UUID.test(attemptId)) ||
+  // Devoir OU séance : un devoirId suffit (le sessionId client est alors ignoré / dérivé du devoir).
+  // Envoyer les deux ne doit plus produire unavailable()/FAQ.
+  if (!UUID.test(uid) || !UUID.test(exerciseId) || (!devoirId && !sessionId) ||
+      (devoirId && !UUID.test(devoirId)) || (!devoirId && sessionId && !UUID.test(sessionId)) ||
+      (attemptId && !UUID.test(attemptId)) ||
       !Number.isInteger(input.itemIndex) || Number(input.itemIndex) < 0) throw new Error('invalid_context');
 
   let mode: ActivityMode;
@@ -40,6 +43,7 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
     // La colonne contexte est protégée par le trigger de garde existant.
     if (!['devoir', 'entrainement', 'evaluation', 'seance'].includes(string(devoir.contexte))) throw new Error('mode_unknown');
     mode = devoir.contexte === 'seance' ? 'entrainement' : devoir.contexte as ActivityMode;
+    // Source de vérité = ligne devoir. Un session_id client divergent ne doit pas invalider le contexte.
     sessionId = string(devoir.session_id) || null;
   } else {
     // Contexte séance explicite, pas le mode en_ligne de l'exercice.
@@ -47,10 +51,17 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
   }
   if (sessionId) {
     session = await one(user, 'sessions', 'id, group_id, titre, objectifs, training_session_id', { id: sessionId });
-    if (!session || !string(session.group_id)) throw new Error('session_unavailable');
-    const membership = await one(user, 'group_members', 'group_id, eleve_id', { group_id: string(session.group_id), eleve_id: uid });
-    if (!membership || membership.eleve_id !== uid) throw new Error('not_enrolled');
-    if (!devoirId) {
+    if (devoirId) {
+      // Devoir déjà attribué : la session ne sert qu’à l’objectif + journalisation.
+      // Une séance absente / hors groupe ne doit PAS masquer l’aide derrière unavailable().
+      if (!session || !string(session.group_id)) {
+        session = null;
+        sessionId = null;
+      }
+    } else {
+      if (!session || !string(session.group_id)) throw new Error('session_unavailable');
+      const membership = await one(user, 'group_members', 'group_id, eleve_id', { group_id: string(session.group_id), eleve_id: uid });
+      if (!membership || membership.eleve_id !== uid) throw new Error('not_enrolled');
       const sent = await content.read('session_exercices', 'exercice_id, eleve_id, is_sent, bloc', { session_id: sessionId, exercice_id: exerciseId });
       link = sent.find(row => row.is_sent === true && (row.eleve_id === uid || row.eleve_id === null)) ?? null;
       if (link) {
